@@ -17,9 +17,9 @@ namespace OneSystemManagement.Controllers.Api
     {
         #region ctor
 
-        private readonly IOneSystemRepository<Area> _areaRepository;
+        private readonly IRepository<Area> _areaRepository;
         private readonly IMapper _mapper;
-        public AreaApiController(IOneSystemRepository<Area> areaRepository, IMapper mapper)
+        public AreaApiController(IRepository<Area> areaRepository, IMapper mapper)
         {
             _areaRepository = areaRepository;
             _mapper = mapper;
@@ -74,6 +74,14 @@ namespace OneSystemManagement.Controllers.Api
             try
             {
                 var entity = await _areaRepository.GetAsync(id);
+
+                if (entity == null)
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Input could not be found.";
+                    return response.ToHttpResponse();
+                }
+
                 var resource = new AreaResource();
                 _mapper.Map(entity, resource);
                 response.Model = resource;
@@ -128,10 +136,6 @@ namespace OneSystemManagement.Controllers.Api
                 }
 
                 _mapper.Map(resource, area);
-
-                area.AreaName = resource.AreaName;
-                area.CodeArea = resource.CodeArea;
-                area.Description = resource.Description;
 
                 await _areaRepository.UpdateAsync(area);
 

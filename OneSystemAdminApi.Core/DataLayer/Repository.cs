@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace OneSystemAdminApi.Core.DataLayer
 {
-    public class OneSystemRepository<T> : IOneSystemRepository<T>, IDisposable where T : class 
+    public class Repository<T> : IRepository<T>, IDisposable where T : class 
     {
         private readonly OneSystemDbContext _dbContext;
         private bool _disposed;
 
-        public OneSystemRepository(OneSystemDbContext dbContext)
+        public Repository(OneSystemDbContext dbContext)
         {
             _dbContext = dbContext;
         }

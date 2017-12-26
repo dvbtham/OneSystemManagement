@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace OneSystemAdminApi.Core.DataLayer
 {
-    public interface IOneSystemRepository<T> : IDisposable where T : class
+    public interface IRepository<T> : IDisposable where T : class
     {
         IQueryable<T> GetAll();
 

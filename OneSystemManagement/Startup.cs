@@ -34,7 +34,7 @@ namespace OneSystemManagement
             services.AddMvc();
             services.AddEntityFrameworkSqlServer().AddDbContext<OneSystemDbContext>();
             services.AddScoped<IEntityMapper, OneSystemEntityMapper>();
-            services.AddScoped(typeof(IOneSystemRepository<>), typeof(OneSystemRepository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddOptions();
 

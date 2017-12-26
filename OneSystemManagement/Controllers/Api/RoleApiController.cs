@@ -1,90 +1,174 @@
-﻿//using System.Collections.Generic;
-//using System.Linq;
-//using AutoMapper;
-//using Microsoft.AspNetCore.Mvc;
-//using OneSystemAdminApi.Core.EntityLayer;
-//using OneSystemManagement.Controllers.Resources;
-//using OneSystemManagement.Persistence.Repositories;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using OneSystemAdminApi.Core.DataLayer;
+using OneSystemAdminApi.Core.EntityLayer;
+using OneSystemManagement.Controllers.Resources;
+using OneSystemManagement.Responses;
 
-//namespace OneSystemManagement.Controllers.Api
-//{
-//    [Produces("application/json")]
-//    [Route("api/roles")]
-//    public class RoleApiController : Controller
-//    {
-//        private readonly IRepository<Role> _roleRepository;
-//        private readonly IMapper _mapper;
-//        public RoleApiController(IRepository<Role> roleRepository, IMapper mapper)
-//        {
-//            _roleRepository = roleRepository;
-//            _mapper = mapper;
-//        }
+namespace OneSystemManagement.Controllers.Api
+{
+    [Produces("application/json")]
+    [Route("api/role")]
+    public class RoleApiController : Controller
+    {
+        #region ctor
 
-//        public IList<Role> GetAll(string q = null)
-//        {
-//            var query = _roleRepository.GetAll().ToList();
-//            if (!string.IsNullOrEmpty(q) && query.Any())
-//            {
-//                q = q.ToLower();
-//                query = query.Where(x => x.CodeRole.ToLower().Contains(q)
-//                || x.RoleName.ToLower().Contains(q) 
-//                || x.Description.ToLower().Contains(q)).ToList();
-//            }
-//            return query;
-//        }
+        private readonly IRepository<Role> _roleRepository;
+        private readonly IMapper _mapper;
+        public RoleApiController(IRepository<Role> roleRepository, IMapper mapper)
+        {
+            _roleRepository = roleRepository;
+            _mapper = mapper;
+        }
 
-//        [HttpGet("{id}")]
-//        public IActionResult Get(int id)
-//        {
-//            var role = _roleRepository.Find(x => x.Id == id);
+        protected override void Dispose(bool disposing)
+        {
+            _roleRepository?.Dispose();
 
-//            if (role == null) return NotFound("Data could not be found");
-//            var resource = new RoleResource();
-//            _mapper.Map(role, resource);
-//            return Ok(resource);
-//        }
+            base.Dispose(disposing);
+        }
 
-//        [HttpPost]
-//        public IActionResult Create([FromBody] RoleResource resource)
-//        {
-//            if (!ModelState.IsValid) return BadRequest(ModelState);
+        #endregion
 
-//            var role = new Role();
-//            _mapper.Map(resource, role);
+        #region CRUD Methods
 
-//            _roleRepository.Insert(role);
+        [HttpGet]
+        public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
+        {
+            var response = new ListModelResponse<RoleResource>();
+            var query = _roleRepository.GetAll().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            if (!string.IsNullOrEmpty(q) && query.Any())
+            {
+                q = q.ToLower();
+                query = query.Where(x => x.RoleName.ToLower().Contains(q.ToLower())
+                || x.CodeRole.ToLower().Contains(q.ToLower())).ToList();
+            }
 
-//            return Ok(role.Id);
-//        }
+            try
+            {
+                response.PageSize = pageSize;
+                response.PageNumber = pageNumber;
 
-//        [HttpPut("{id}")]
-//        public IActionResult Update(int id, [FromBody] RoleResource resource)
-//        {
-//            if (!ModelState.IsValid) return BadRequest(ModelState);
+                response.Model = _mapper.Map(query, response.Model);
 
-//            var role = _roleRepository.Find(x => x.Id == id);
+                response.Message = string.Format("Total of records: {0}", response.Model.Count());
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.Message;
+            }
 
-//            if (role == null) return NotFound("Data could not be found");
+            return response.ToHttpResponse();
+        }
 
-//            _mapper.Map(resource, role);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            var response = new SingleModelResponse<RoleResource>();
 
-//            _roleRepository.Insert(role);
+            try
+            {
+                var entity = await _roleRepository.GetAsync(id);
+                if (entity == null)
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Input could not be found.";
+                    return response.ToHttpResponse();
+                }
+                var resource = new RoleResource();
+                _mapper.Map(entity, resource);
+                response.Model = resource;
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.Message;
+            }
 
-//            return Ok(role.Id);
-//        }
+            return response.ToHttpResponse();
+        }
 
-//        [HttpDelete("{id}")]
-//        public IActionResult Detete(int id)
-//        {
-//            if (!ModelState.IsValid) return BadRequest(ModelState);
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] RoleResource resource)
+        {
+            var response = new SingleModelResponse<RoleResource>();
 
-//            var role = _roleRepository.Find(x => x.Id == id);
+            try
+            {
+                var role = new Role();
+                _mapper.Map(resource, role);
 
-//            if (role == null) return NotFound("Data could not be found.");
+                var entity = await _roleRepository.AddAsync(role);
 
-//           _roleRepository.Delete(role);
+                response.Model = _mapper.Map(entity, resource);
+                response.Message = "The data was saved successfully";
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.ToString();
+            }
 
-//            return Ok(role.Id);
-//        }
-//    }
-//}
+            return response.ToHttpResponse();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] RoleResource resource)
+        {
+            var response = new SingleModelResponse<RoleResource>();
+
+            try
+            {
+                var role = await _roleRepository.FindAsync(x => x.Id == id);
+
+                if (role == null)
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Input could not be found.";
+                    return response.ToHttpResponse();
+                }
+
+                _mapper.Map(resource, role);
+                
+                await _roleRepository.UpdateAsync(role);
+
+                response.Model = _mapper.Map(role, resource);
+                response.Message = "The data was saved successfully";
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.ToString();
+            }
+
+            return response.ToHttpResponse();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = new SingleModelResponse<RoleResource>();
+
+            try
+            {
+                var entity = await _roleRepository.DeleteAsync(id);
+                var resource = new RoleResource();
+                response.Model = _mapper.Map(entity, resource);
+                response.Message = "The record was deleted successfully";
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.Message;
+            }
+
+            return response.ToHttpResponse();
+        }
+
+        #endregion
+    }
+}
