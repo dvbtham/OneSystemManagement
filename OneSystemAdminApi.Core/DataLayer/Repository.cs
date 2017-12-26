@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace OneSystemAdminApi.Core.DataLayer
 {
-    public class Repository<T> : IRepository<T>, IDisposable where T : class 
+    public class Repository<T> : IRepository<T>, IDisposable where T : class
     {
         private readonly OneSystemDbContext _dbContext;
         private bool _disposed;
@@ -16,7 +16,7 @@ namespace OneSystemAdminApi.Core.DataLayer
             _dbContext = dbContext;
         }
 
-        public IQueryable<T> GetAll()
+        public IQueryable<T> Query()
         {
             return _dbContext.Set<T>();
         }

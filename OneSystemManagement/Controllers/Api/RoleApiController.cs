@@ -39,7 +39,7 @@ namespace OneSystemManagement.Controllers.Api
         public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
         {
             var response = new ListModelResponse<RoleResource>();
-            var query = _roleRepository.GetAll().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var query = _roleRepository.Query().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();

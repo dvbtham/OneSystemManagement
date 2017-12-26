@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace OneSystemAdminApi.Core.EntityLayer
+﻿namespace OneSystemManagement.Controllers.Resources
 {
-    public class User
+    public class UserInfoResource
     {
-        public User()
-        {
-            UserRoles = new HashSet<UserRole>();
-        }
-
-        public int Id { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string Phone { get; set; }
@@ -30,15 +20,9 @@ namespace OneSystemAdminApi.Core.EntityLayer
         public bool IsAdmin { get; set; }
         public string Address { get; set; }
         public string Avatar { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime? LastLogin { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime? CreateDate { get; set; }
+        
         public int LoginFailed { get; set; }
         public string QuestionCode { get; set; }
         public string QuestionAnswer { get; set; }
-
-        public ICollection<UserRole> UserRoles { get; set; }
     }
 }

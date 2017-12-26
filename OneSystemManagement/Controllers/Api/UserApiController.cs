@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
@@ -28,7 +29,7 @@ namespace OneSystemManagement.Controllers.Api
         public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
         {
             var response = new ListModelResponse<UserResource>();
-            var query = _userRepository.GetAll().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var query = _userRepository.Query().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
@@ -58,18 +59,19 @@ namespace OneSystemManagement.Controllers.Api
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var response = new SingleModelResponse<UserResource>();
+            var response = new SingleModelResponse<UserGridResource>();
 
             try
             {
-                var entity = await _userRepository.GetAsync(id);
+                var entity = await GetUserRelated(id);
+
                 if (entity == null)
                 {
                     response.DidError = true;
                     response.ErrorMessage = "Input could not be found.";
                     return response.ToHttpResponse();
                 }
-                var resource = new UserResource();
+                var resource = new UserGridResource();
                 _mapper.Map(entity, resource);
                 response.Model = resource;
             }
@@ -83,19 +85,28 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UserResource resource)
+        public async Task<IActionResult> Create([FromBody] UserSaveResource userSaveResource)
         {
-            var response = new SingleModelResponse<UserResource>();
+            var response = new SingleModelResponse<UserGridResource>();
+
+            if (userSaveResource == null)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "Input cannot be null.";
+                return response.ToHttpResponse();
+            }
 
             try
             {
                 var user = new User();
-                _mapper.Map(resource, user);
+                _mapper.Map(userSaveResource, user);
 
+                user.CreateDate = DateTime.Now;
                 var entity = await _userRepository.AddAsync(user);
+                var entityMap = await GetUserRelated(entity.Id);
 
-                response.Model = _mapper.Map(entity, resource);
-                response.Message = "The data was saved successfully";
+                response.Model = _mapper.Map<User, UserGridResource>(entityMap);
+                response.Message = "The data was saved successfully.";
             }
             catch (Exception ex)
             {
@@ -107,26 +118,26 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UserResource resource)
+        public async Task<IActionResult> Update(int id, [FromBody] UserSaveResource userSaveResource)
         {
-            var response = new SingleModelResponse<UserResource>();
+            var response = new SingleModelResponse<UserGridResource>();
 
             try
             {
-                var user = await _userRepository.FindAsync(x => x.Id == id);
-
-                if (user == null)
+                var entity = await GetUserRelated(id);
+                
+                if (entity == null || !ModelState.IsValid)
                 {
                     response.DidError = true;
                     response.ErrorMessage = "Input could not be found.";
                     return response.ToHttpResponse();
                 }
 
-                _mapper.Map(resource, user);
+                _mapper.Map(userSaveResource, entity);
 
-                await _userRepository.UpdateAsync(user);
-
-                response.Model = _mapper.Map(user, resource);
+                await _userRepository.UpdateAsync(entity);
+                
+                response.Model = _mapper.Map<User, UserGridResource>(entity);
                 response.Message = "The data was saved successfully";
             }
             catch (Exception ex)
@@ -141,13 +152,13 @@ namespace OneSystemManagement.Controllers.Api
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var response = new SingleModelResponse<UserResource>();
+            var response = new SingleModelResponse<UserGridResource>();
 
             try
             {
                 var entity = await _userRepository.DeleteAsync(id);
-                var resource = new UserResource();
-                response.Model = _mapper.Map(entity, resource);
+               
+                response.Model = _mapper.Map<User, UserGridResource>(entity);
                 response.Message = "The record was deleted successfully";
             }
             catch (Exception ex)
@@ -157,6 +168,16 @@ namespace OneSystemManagement.Controllers.Api
             }
 
             return response.ToHttpResponse();
+        }
+
+        private async Task<User> GetUserRelated(int id)
+        {
+            var entity = await _userRepository.Query()
+                  .Include(x => x.UserRoles)
+                      .ThenInclude(ur => ur.Role)
+                  .SingleOrDefaultAsync(x => x.Id == id);
+
+            return entity;
         }
 
         #endregion

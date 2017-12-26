@@ -40,7 +40,7 @@ namespace OneSystemManagement.Controllers.Api
         public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
         {
             var response = new ListModelResponse<AreaResource>();
-            var query = _areaRepository.GetAll().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var query = _areaRepository.Query().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             if (!IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();

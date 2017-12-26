@@ -14,11 +14,11 @@ namespace OneSystemAdminApi.Core.EntityMapping
                 entity.Property(e => e.Address).HasMaxLength(450);
 
                 entity.Property(e => e.Avatar).HasMaxLength(350);
+                entity.Property(e => e.CreateDate).HasColumnType("datetime2");
+                entity.Property(e => e.LastLogin).HasColumnType("datetime2");
 
                 entity.Property(e => e.ConfirmPassword).HasMaxLength(250);
-
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
+                
                 entity.Property(e => e.Email)
                     .IsRequired()
                     .HasMaxLength(200);
@@ -26,8 +26,7 @@ namespace OneSystemAdminApi.Core.EntityMapping
                 entity.Property(e => e.FullName)
                     .IsRequired()
                     .HasMaxLength(150);
-
-                entity.Property(e => e.LastLogin).HasColumnType("datetime");
+                
 
                 entity.Property(e => e.LoginFailed).HasDefaultValueSql("((0))");
 

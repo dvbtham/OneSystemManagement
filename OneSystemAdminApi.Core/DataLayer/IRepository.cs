@@ -7,7 +7,7 @@ namespace OneSystemAdminApi.Core.DataLayer
 {
     public interface IRepository<T> : IDisposable where T : class
     {
-        IQueryable<T> GetAll();
+        IQueryable<T> Query();
 
         Task<T> FindAsync(Expression<Func<T, bool>> match);
 

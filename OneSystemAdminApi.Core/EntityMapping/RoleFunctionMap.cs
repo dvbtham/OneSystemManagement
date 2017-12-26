@@ -11,7 +11,6 @@ namespace OneSystemAdminApi.Core.EntityMapping
             modelBuilder.Entity<RoleFunction>(entity =>
             {
                 entity.ToTable("RoleFunctions");
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Function)
                     .WithMany(p => p.RoleFunctions)
