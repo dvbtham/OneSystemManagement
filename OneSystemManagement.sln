@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneSystemManagement", "OneSystemManagement\OneSystemManagement.csproj", "{D016E3FB-9426-48D4-BBB9-F5D318940B38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneSystemAdminApi.Core", "OneSystemAdminApi.Core\OneSystemAdminApi.Core.csproj", "{801F1291-8966-488D-8D77-DBFFC12E117A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D016E3FB-9426-48D4-BBB9-F5D318940B38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D016E3FB-9426-48D4-BBB9-F5D318940B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D016E3FB-9426-48D4-BBB9-F5D318940B38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D016E3FB-9426-48D4-BBB9-F5D318940B38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{801F1291-8966-488D-8D77-DBFFC12E117A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{801F1291-8966-488D-8D77-DBFFC12E117A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{801F1291-8966-488D-8D77-DBFFC12E117A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{801F1291-8966-488D-8D77-DBFFC12E117A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F420DBF-C35A-4E61-B6DE-FFD19F9B42E3}
+	EndGlobalSection
+EndGlobal
