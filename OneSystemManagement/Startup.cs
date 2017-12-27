@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,14 +8,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Serialization;
 using OneSystemAdminApi.Core.DataLayer;
+using OneSystemManagement.Core.Extensions;
+using OneSystemManagement.Responses.ApiResponses;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace OneSystemManagement
 {
     public class Startup
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
         public Startup(IHostingEnvironment env)
         {
+            _hostingEnvironment = env;
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -26,7 +31,7 @@ namespace OneSystemManagement
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
                 .AddMvc()
@@ -35,6 +40,7 @@ namespace OneSystemManagement
             services.AddEntityFrameworkSqlServer().AddDbContext<OneSystemDbContext>();
             services.AddScoped<IEntityMapper, OneSystemEntityMapper>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IAreaService, AreaService>();
 
             services.AddOptions();
 
@@ -64,6 +70,8 @@ namespace OneSystemManagement
 
 
             services.AddAutoMapper();
+
+            return services.RegisterService(Configuration, _hostingEnvironment);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,18 @@
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using OneSystemAdminApi.Core.EntityLayer;
+using OneSystemManagement.Controllers.Resources;
+
+namespace OneSystemManagement.Responses.ApiResponses
+{
+    public interface IFunctionService : IDisposable
+    {
+        IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null);
+        Task<IActionResult> GetAsync(int id);
+        Task<IActionResult> Create([FromBody] SaveFunctionResource resource);
+        Task<IActionResult> Update(int id, [FromBody] SaveFunctionResource resource);
+        Task<IActionResult> Delete(int id);
+        Task<Function> GetFunctionWithRelated(int id, bool include = true);
+    }
+}

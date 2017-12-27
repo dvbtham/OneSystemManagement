@@ -1,4 +1,6 @@
-﻿namespace OneSystemManagement.Controllers.Resources
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace OneSystemManagement.Controllers.Resources
 {
     public class UserInfoResource
     {
@@ -11,6 +13,8 @@
         public bool IsAccTwitter { get; set; }
         public bool IsAccOutlook { get; set; }
         public bool IsActive { get; set; }
+
+        [Required]
         public string UserIdentifier { get; set; }
         public string UserCode { get; set; }
         public string ConfirmPassword { get; set; }

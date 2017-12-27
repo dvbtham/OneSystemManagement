@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OneSystemAdminApi.Core.DataLayer;
-using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
-using OneSystemManagement.Responses;
+using OneSystemManagement.Responses.ApiResponses;
 
 namespace OneSystemManagement.Controllers.Api
 {
@@ -16,12 +9,10 @@ namespace OneSystemManagement.Controllers.Api
     [Route("api/user")]
     public class UserApiController : Controller
     {
-        private readonly IRepository<User> _userRepository;
-        private readonly IMapper _mapper;
-        public UserApiController(IRepository<User> userRepository, IMapper mapper)
+        private readonly IUserService _userService;
+        public UserApiController(IUserService userService)
         {
-            _userRepository = userRepository;
-            _mapper = mapper;
+            _userService = userService;
         }
 
         #region CRUD Methods
@@ -29,163 +20,33 @@ namespace OneSystemManagement.Controllers.Api
         [HttpGet]
         public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
         {
-            var response = new ListModelResponse<UserGridResource>
-            {
-                PageNumber = (int) pageNumber,
-                PageSize = (int) pageSize
-            };
-            var query = _userRepository.Query()
-                .Include(x => x.UserRoles).ThenInclude(ur => ur.Role)
-                .Skip((response.PageNumber - 1) * response.PageSize)
-                .Take(response.PageSize).ToList();
-
-            if (!string.IsNullOrEmpty(q) && query.Any())
-            {
-                q = q.ToLower();
-                query = query.Where(x => x.FullName.ToLower().Contains(q.ToLower())
-                || x.Email.ToLower().Contains(q.ToLower())
-                || x.Phone.ToLower().Contains(q.ToLower())).ToList();
-            }
-
-            try
-            {
-                response.Model = _mapper.Map<IEnumerable<User>, IEnumerable<UserGridResource>>(query);
-
-                response.Message = string.Format("Total of records: {0}", response.Model.Count());
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.Message;
-            }
-
-            return response.ToHttpResponse();
+            return _userService.GetAll(pageSize, pageNumber, q);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var response = new SingleModelResponse<UserGridResource>();
-
-            try
-            {
-                var entity = await GetUserWithRelated(id);
-
-                if (entity == null)
-                {
-                    response.DidError = true;
-                    response.ErrorMessage = "Input could not be found.";
-                    return response.ToHttpResponse();
-                }
-                var resource = new UserGridResource();
-                _mapper.Map(entity, resource);
-                response.Model = resource;
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.Message;
-            }
-
-            return response.ToHttpResponse();
+            return await _userService.GetAsync(id);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaveUserResource resource)
         {
-            var response = new SingleModelResponse<UserGridResource>();
-
-            if (resource == null)
-            {
-                response.DidError = true;
-                response.ErrorMessage = "Input cannot be null.";
-                return response.ToHttpResponse();
-            }
-
-            try
-            {
-                var user = new User();
-                _mapper.Map(resource, user);
-
-                user.CreateDate = DateTime.Now;
-                var entity = await _userRepository.AddAsync(user);
-                var entityMap = await GetUserWithRelated(entity.Id);
-
-                response.Model = _mapper.Map<User, UserGridResource>(entityMap);
-                response.Message = "The data was saved successfully.";
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.ToString();
-            }
-
-            return response.ToHttpResponse();
+            return await _userService.Create(resource);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] SaveUserResource resource)
         {
-            var response = new SingleModelResponse<UserGridResource>();
-
-            try
-            {
-                var entity = await GetUserWithRelated(id);
-
-                if (entity == null || !ModelState.IsValid)
-                {
-                    response.DidError = true;
-                    response.ErrorMessage = "Input could not be found.";
-                    return response.ToHttpResponse();
-                }
-
-                _mapper.Map(resource, entity);
-
-                await _userRepository.UpdateAsync(entity);
-
-                response.Model = _mapper.Map<User, UserGridResource>(entity);
-                response.Message = "The data was saved successfully";
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.ToString();
-            }
-
-            return response.ToHttpResponse();
+            return await _userService.Update(id, resource);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var response = new SingleModelResponse<UserGridResource>();
-
-            try
-            {
-                var entity = await _userRepository.DeleteAsync(id);
-
-                response.Model = _mapper.Map<User, UserGridResource>(entity);
-                response.Message = "The record was deleted successfully";
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.Message;
-            }
-
-            return response.ToHttpResponse();
+            return await _userService.Delete(id);
         }
-
-        private async Task<User> GetUserWithRelated(int id)
-        {
-            var entity = await _userRepository.Query()
-                  .Include(x => x.UserRoles)
-                      .ThenInclude(ur => ur.Role)
-                  .SingleOrDefaultAsync(x => x.Id == id);
-
-            return entity;
-        }
-
+        
         #endregion
     }
 }

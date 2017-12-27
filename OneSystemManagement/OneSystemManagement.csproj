@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
@@ -27,7 +29,6 @@
     <Folder Include="Areas\SystemAdmin\Data\" />
     <Folder Include="Areas\SystemAdmin\Models\" />
     <Folder Include="Areas\SystemAdmin\Views\" />
-    <Folder Include="Core\Infrastructure\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 

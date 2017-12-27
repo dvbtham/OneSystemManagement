@@ -1,12 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using OneSystemAdminApi.Core.DataLayer;
-using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
-using OneSystemManagement.Responses;
+using OneSystemManagement.Responses.ApiResponses;
 
 namespace OneSystemManagement.Controllers.Api
 {
@@ -14,23 +9,19 @@ namespace OneSystemManagement.Controllers.Api
     [Route("api/area")]
     public class AreaApiController : Controller
     {
+        private readonly IAreaService _areaService;
+
         #region ctor
-
-        private readonly IRepository<Area> _areaRepository;
-        private readonly IMapper _mapper;
-        public AreaApiController(IRepository<Area> areaRepository, IMapper mapper)
+        public AreaApiController(IAreaService areaService)
         {
-            _areaRepository = areaRepository;
-            _mapper = mapper;
+            _areaService = areaService;
         }
-
         protected override void Dispose(bool disposing)
         {
-            _areaRepository?.Dispose();
+            _areaService?.Dispose();
 
             base.Dispose(disposing);
         }
-
         #endregion
 
         #region CRUD Methods
@@ -38,141 +29,31 @@ namespace OneSystemManagement.Controllers.Api
         [HttpGet]
         public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
         {
-            var response = new ListModelResponse<AreaResource>
-            {
-                PageSize = (int)pageSize,
-                PageNumber = (int)pageNumber
-            };
-            var query = _areaRepository.Query()
-                .Skip((response.PageNumber - 1) * response.PageSize)
-                .Take(response.PageSize).ToList();
-
-            if (!string.IsNullOrEmpty(q) && query.Any())
-            {
-                q = q.ToLower();
-                query = query.Where(x => x.AreaName.ToLower().Contains(q.ToLower())
-                || x.CodeArea.ToLower().Contains(q.ToLower())).ToList();
-            }
-
-            try
-            {
-                response.Model = _mapper.Map(query, response.Model);
-
-                response.Message = string.Format("Total of records: {0}", response.Model.Count());
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.Message;
-            }
-
-            return response.ToHttpResponse();
+            return _areaService.GetAll(pageSize, pageNumber, q);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var response = new SingleModelResponse<AreaResource>();
-
-            try
-            {
-                var entity = await _areaRepository.GetAsync(id);
-
-                if (entity == null)
-                {
-                    response.DidError = true;
-                    response.ErrorMessage = "Input could not be found.";
-                    return response.ToHttpResponse();
-                }
-
-                var resource = new AreaResource();
-                _mapper.Map(entity, resource);
-                response.Model = resource;
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.Message;
-            }
-
-            return response.ToHttpResponse();
+            return await _areaService.GetAsync(id);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AreaResource resource)
         {
-            var response = new SingleModelResponse<AreaResource>();
-
-            try
-            {
-                var area = new Area();
-                _mapper.Map(resource, area);
-
-                var entity = await _areaRepository.AddAsync(area);
-
-                response.Model = _mapper.Map(entity, resource);
-                response.Message = "The data was saved successfully";
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.ToString();
-            }
-
-            return response.ToHttpResponse();
+            return await _areaService.Create(resource);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] AreaResource resource)
         {
-            var response = new SingleModelResponse<AreaResource>();
-
-            try
-            {
-                var area = await _areaRepository.FindAsync(x => x.Id == id);
-
-                if (area == null)
-                {
-                    response.DidError = true;
-                    response.ErrorMessage = "Input could not be found.";
-                    return response.ToHttpResponse();
-                }
-
-                _mapper.Map(resource, area);
-
-                await _areaRepository.UpdateAsync(area);
-
-                response.Model = _mapper.Map(area, resource);
-                response.Message = "The data was saved successfully";
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.ToString();
-            }
-
-            return response.ToHttpResponse();
+            return await _areaService.Update(id, resource);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var response = new SingleModelResponse<AreaResource>();
-
-            try
-            {
-                var entity = await _areaRepository.DeleteAsync(id);
-                var resource = new AreaResource();
-                response.Model = _mapper.Map(entity, resource);
-                response.Message = "The record was deleted successfully";
-            }
-            catch (Exception ex)
-            {
-                response.DidError = true;
-                response.ErrorMessage = ex.Message;
-            }
-
-            return response.ToHttpResponse();
+            return await _areaService.Delete(id);
         }
 
         #endregion
