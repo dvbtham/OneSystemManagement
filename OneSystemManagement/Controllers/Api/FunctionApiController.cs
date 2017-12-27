@@ -29,29 +29,32 @@ namespace OneSystemManagement.Controllers.Api
         #region CRUD Methods
 
         [HttpGet]
-        public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
+        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
         {
-            var response = new ListModelResponse<FunctionResource>();
+
+            var response = new ListModelResponse<FunctionResource>
+            {
+                PageSize = (int)pageSize,
+                PageNumber = (int)pageNumber
+            };
             var query = _functionRepository.Query()
                 .Include(f => f.RoleFunctions)
-                    .ThenInclude(rf => rf.Role)
+                .ThenInclude(rf => rf.Role)
                 .Include(x => x.Functions)
                 .Include(x => x.FunctionProp)
-                .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                .Skip((response.PageNumber - 1) * response.PageSize)
+                .Take(response.PageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
                 query = query.Where(x => x.FuctionName.ToLower().Contains(q.ToLower())
-                || x.CodeFuction.ToLower().Contains(q.ToLower())
-                || x.Description.ToLower().Contains(q.ToLower())).ToList();
+                                         || x.CodeFuction.ToLower().Contains(q.ToLower())
+                                         || x.Description.ToLower().Contains(q.ToLower())).ToList();
             }
 
             try
             {
-                response.PageSize = pageSize;
-                response.PageNumber = pageNumber;
-
                 response.Model = _mapper.Map<IEnumerable<Function>, IEnumerable<FunctionResource>>(query);
 
                 response.Message = string.Format("Total of records: {0}", response.Model.Count());

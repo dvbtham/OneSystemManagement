@@ -27,12 +27,17 @@ namespace OneSystemManagement.Controllers.Api
         #region CRUD Methods
 
         [HttpGet]
-        public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
+        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
         {
-            var response = new ListModelResponse<UserGridResource>();
+            var response = new ListModelResponse<UserGridResource>
+            {
+                PageNumber = (int) pageNumber,
+                PageSize = (int) pageSize
+            };
             var query = _userRepository.Query()
                 .Include(x => x.UserRoles).ThenInclude(ur => ur.Role)
-                .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                .Skip((response.PageNumber - 1) * response.PageSize)
+                .Take(response.PageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
@@ -44,9 +49,6 @@ namespace OneSystemManagement.Controllers.Api
 
             try
             {
-                response.PageSize = pageSize;
-                response.PageNumber = pageNumber;
-
                 response.Model = _mapper.Map<IEnumerable<User>, IEnumerable<UserGridResource>>(query);
 
                 response.Message = string.Format("Total of records: {0}", response.Model.Count());

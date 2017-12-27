@@ -36,10 +36,18 @@ namespace OneSystemManagement.Controllers.Api
         #region CRUD Methods
 
         [HttpGet]
-        public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
+        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
         {
-            var response = new ListModelResponse<RoleResource>();
-            var query = _roleRepository.Query().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var response = new ListModelResponse<RoleResource>
+            {
+                PageSize = (int)pageSize,
+                PageNumber = (int)pageNumber
+            };
+
+            var query = _roleRepository.Query()
+                .Skip((response.PageNumber - 1) * response.PageSize)
+                .Take(response.PageSize).ToList();
+
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
@@ -49,9 +57,6 @@ namespace OneSystemManagement.Controllers.Api
 
             try
             {
-                response.PageSize = pageSize;
-                response.PageNumber = pageNumber;
-
                 response.Model = _mapper.Map(query, response.Model);
 
                 response.Message = string.Format("Total of records: {0}", response.Model.Count());

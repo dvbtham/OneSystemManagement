@@ -7,7 +7,6 @@ using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
 using OneSystemManagement.Responses;
-using static System.String;
 
 namespace OneSystemManagement.Controllers.Api
 {
@@ -37,11 +36,18 @@ namespace OneSystemManagement.Controllers.Api
         #region CRUD Methods
 
         [HttpGet]
-        public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
+        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
         {
-            var response = new ListModelResponse<AreaResource>();
-            var query = _areaRepository.Query().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            if (!IsNullOrEmpty(q) && query.Any())
+            var response = new ListModelResponse<AreaResource>
+            {
+                PageSize = (int)pageSize,
+                PageNumber = (int)pageNumber
+            };
+            var query = _areaRepository.Query()
+                .Skip((response.PageNumber - 1) * response.PageSize)
+                .Take(response.PageSize).ToList();
+
+            if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
                 query = query.Where(x => x.AreaName.ToLower().Contains(q.ToLower())
@@ -50,12 +56,9 @@ namespace OneSystemManagement.Controllers.Api
 
             try
             {
-                response.PageSize = pageSize;
-                response.PageNumber = pageNumber;
-
                 response.Model = _mapper.Map(query, response.Model);
 
-                response.Message = Format("Total of records: {0}", response.Model.Count());
+                response.Message = string.Format("Total of records: {0}", response.Model.Count());
             }
             catch (Exception ex)
             {
