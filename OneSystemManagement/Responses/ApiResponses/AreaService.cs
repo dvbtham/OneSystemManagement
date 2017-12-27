@@ -19,7 +19,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             _areaRepository = areaRepository;
             _mapper = mapper;
         }
-        
+
         public IActionResult GetAll(int? pageSize, int? pageNumber, string q = null)
         {
             var response = new ListModelResponse<AreaResource>
@@ -27,7 +27,7 @@ namespace OneSystemManagement.Responses.ApiResponses
                 PageSize = (int)pageSize,
                 PageNumber = (int)pageNumber
             };
-            var query = _areaRepository.Query()
+            var query = _areaRepository.Query().Include(x => x.Functions)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
 
@@ -59,7 +59,8 @@ namespace OneSystemManagement.Responses.ApiResponses
 
             try
             {
-                var entity = await _areaRepository.GetAsync(id);
+                var entity = await _areaRepository.Query().Include(x => x.Functions)
+                    .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (entity == null)
                 {
@@ -112,7 +113,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             {
                 var area = await _areaRepository.FindAsync(x => x.Id == id);
 
-                if (area == null)
+                if (area == null || resource == null)
                 {
                     response.DidError = true;
                     response.ErrorMessage = "Input could not be found.";

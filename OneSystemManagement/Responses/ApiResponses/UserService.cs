@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
+using OneSystemManagement.Core.Extensions;
 
 namespace OneSystemManagement.Responses.ApiResponses
 {
@@ -88,7 +90,7 @@ namespace OneSystemManagement.Responses.ApiResponses
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SaveUserResource resource)
+        public async Task<IActionResult> Create(SaveUserResource resource)
         {
             var response = new SingleModelResponse<UserGridResource>();
 
@@ -104,7 +106,16 @@ namespace OneSystemManagement.Responses.ApiResponses
                 var user = new User();
                 _mapper.Map(resource, user);
 
+                if (_userRepository.Query().Any(x => x.Email == resource.UserInfo.Email))
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "This email is already register.";
+                    return response.ToHttpResponse();
+                }
+
                 user.CreateDate = DateTime.Now;
+                var md5Hash = MD5.Create();
+                user.Password = PasswordManager.GetMd5Hash(md5Hash, resource.UserInfo.Password);
                 var entity = await _userRepository.AddAsync(user);
                 var entityMap = await GetUserWithRelated(entity.Id);
 
@@ -121,7 +132,7 @@ namespace OneSystemManagement.Responses.ApiResponses
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SaveUserResource resource)
+        public async Task<IActionResult> Update(int id, SaveUserResource resource)
         {
             var response = new SingleModelResponse<UserGridResource>();
 
@@ -184,14 +195,34 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public async Task<User> GetUserWithRelated(int id)
+        public async Task<User> GetUserWithRelated(int id, bool include = true)
         {
-            var entity = await _userRepository.Query().Where(x => x.IsActive)
-                .Include(x => x.UserRoles)
-                .ThenInclude(ur => ur.Role)
-                .SingleOrDefaultAsync(x => x.Id == id);
+            if (include)
+            {
+                var entityTrue = await _userRepository.Query().Where(x => x.IsActive)
+                    .Include(x => x.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                    .SingleOrDefaultAsync(x => x.Id == id);
 
-            return entity;
+                return entityTrue;
+            }
+
+            var entityFalse = await _userRepository.Query().Where(x => x.IsActive).SingleOrDefaultAsync(x => x.Id == id);
+
+            return entityFalse;
+
+        }
+
+       public async Task<bool> Login(string email, string password)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return false;
+            var user = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
+            if (user == null) return false;
+
+            var md5Hash = MD5.Create();
+            if (!PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password)) return false;
+
+            return true;
         }
 
         #endregion

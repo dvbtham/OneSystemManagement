@@ -9,8 +9,8 @@ namespace OneSystemManagement.Responses.ApiResponses
     {
         IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null);
         Task<IActionResult> GetAsync(int id);
-        Task<IActionResult> Create([FromBody] RoleResource resource);
-        Task<IActionResult> Update(int id, [FromBody] RoleResource resource);
+        Task<IActionResult> Create(RoleResource resource);
+        Task<IActionResult> Update(int id, RoleResource resource);
         Task<IActionResult> Delete(int id);
     }
 }

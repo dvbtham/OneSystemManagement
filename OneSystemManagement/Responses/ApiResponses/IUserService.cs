@@ -10,9 +10,10 @@ namespace OneSystemManagement.Responses.ApiResponses
     {
         IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null);
         Task<IActionResult> GetAsync(int id);
-        Task<IActionResult> Create([FromBody] SaveUserResource resource);
-        Task<IActionResult> Update(int id, [FromBody] SaveUserResource resource);
+        Task<IActionResult> Create(SaveUserResource resource);
+        Task<IActionResult> Update(int id, SaveUserResource resource);
         Task<IActionResult> Delete(int id);
-        Task<User> GetUserWithRelated(int id);
+        Task<User> GetUserWithRelated(int id, bool include = true);
+        Task<bool> Login(string email, string password);
     }
 }

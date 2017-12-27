@@ -39,15 +39,17 @@ namespace OneSystemManagement.Responses.ApiResponses
                 .ThenInclude(rf => rf.Role)
                 .Include(x => x.Functions)
                 .Include(x => x.FunctionProp)
+                .Include(x => x.Area)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
-                query = query.Where(x => x.FuctionName.ToLower().Contains(q.ToLower())
-                                         || x.CodeFuction.ToLower().Contains(q.ToLower())
-                                         || x.Description.ToLower().Contains(q.ToLower())).ToList();
+                query = query.Where(x => x.FuctionName.ToLower().Contains(q)
+                                         || x.CodeFuction.ToLower().Contains(q)
+                                         || x.Description.ToLower().Contains(q)
+                                         || x.Area.AreaName.ToLower().Contains(q)).ToList();
             }
 
             try
@@ -92,7 +94,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public async Task<IActionResult> Create([FromBody] SaveFunctionResource resource)
+        public async Task<IActionResult> Create(SaveFunctionResource resource)
         {
             var response = new SingleModelResponse<FunctionResource>();
 
@@ -123,7 +125,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public async Task<IActionResult> Update(int id, [FromBody] SaveFunctionResource resource)
+        public async Task<IActionResult> Update(int id, SaveFunctionResource resource)
         {
             var response = new SingleModelResponse<FunctionResource>();
 

@@ -46,7 +46,14 @@ namespace OneSystemManagement.Controllers.Api
         {
             return await _userService.Delete(id);
         }
-        
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<bool> Login(string email, string password)
+        {
+            return await _userService.Login(email, password);
+        }
+
         #endregion
     }
 }
