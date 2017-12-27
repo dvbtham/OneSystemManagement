@@ -7,56 +7,9 @@ namespace OneSystemManagement.Core.Mapping
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile()
+        private void UserResourceToDomain()
         {
-            //Domain to resource
-            CreateMap<Area, AreaResource>();
-            CreateMap<Function, FunctionResource>();
-            CreateMap<Role, RoleResource>();
-            CreateMap<User, UserGridResource>()
-                .ForMember(ug => ug.Roles, 
-                opt => opt.MapFrom(u => u.UserRoles.Select(ur => new KeyValuePairResource
-                {
-                    Id = ur.Role.Id,
-                    Name = ur.Role.RoleName
-                })));
-
-            CreateMap<User, UserResource>()
-                .ForMember(ur => ur.UserInfoResource, 
-                opt => opt.MapFrom(u => new UserInfoResource
-                {
-                    Address = u.Address,
-                    Phone = u.Phone,
-                    Email = u.Email,
-                    FullName = u.FullName,
-                    Avatar = u.Avatar,
-                    ConfirmPassword = u.ConfirmPassword,
-                    IsAccFacebook = u.IsAccFacebook,
-                    IsAccGoogle = u.IsAccGoogle,
-                    IsAccOutlook = u.IsAccOutlook,
-                    IsAccTwitter = u.IsAccTwitter,
-                    IsActive = u.IsActive,
-                    IsAdmin = u.IsAdmin,
-                    IsConfirm = u.IsConfirm,
-                    IsMember = u.IsMember,
-                    IsPartner = u.IsPartner,
-                    LoginFailed = u.LoginFailed,
-                    Password = u.Password,
-                    QuestionAnswer = u.QuestionAnswer,
-                    QuestionCode = u.QuestionCode,
-                    UserCode = u.UserCode,
-                    UserIdentifier = u.UserIdentifier
-                }))
-                .ForMember(rr => rr.Roles, opt => opt.MapFrom(u => u.UserRoles.Select(ur => new KeyValuePairResource
-                {
-                    Id = ur.Role.Id,
-                    Name = ur.Role.RoleName
-                })));
-
-            //Resource to domain
-            CreateMap<AreaResource, Area>().ForMember(ar => ar.Id, opt => opt.Ignore());
-            CreateMap<RoleResource, Role>().ForMember(rr => rr.Id, opt => opt.Ignore());
-            CreateMap<UserSaveResource, User>().ForMember(u => u.Id, opt => opt.Ignore())
+            CreateMap<SaveUserResource, User>().ForMember(u => u.Id, opt => opt.Ignore())
                 .ForMember(u => u.Address, opt => opt.MapFrom(usr => usr.UserInfo.Address))
                 .ForMember(u => u.Phone, opt => opt.MapFrom(usr => usr.UserInfo.Phone))
                 .ForMember(u => u.Email, opt => opt.MapFrom(usr => usr.UserInfo.Email))
@@ -93,6 +46,93 @@ namespace OneSystemManagement.Core.Mapping
                     foreach (var f in addedRoles)
                         u.UserRoles.Add(f);
                 });
+        }
+        private void FunctionResourceToDomain()
+        {
+            CreateMap<SaveFunctionResource, Function>()
+                .ForMember(f => f.Id, opt => opt.Ignore())
+                .ForMember(f => f.RoleFunctions, opt => opt.Ignore())
+                .AfterMap((usr, u) =>
+                {
+                    //Remove unselected Roles
+                    var removedRoles = u.RoleFunctions.Where(f => !usr.Roles.Contains(f.IdRole)).ToList();
+                    foreach (var f in removedRoles)
+                        u.RoleFunctions.Remove(f);
+
+                    // Add new Roles
+                    var addedRoles = usr.Roles
+                        .Where(id => u.RoleFunctions.All(x => x.IdRole != id))
+                        .Select(id => new RoleFunction { IdRole = id }).ToList();
+
+                    foreach (var f in addedRoles)
+                        u.RoleFunctions.Add(f);
+                });
+        }
+        public MappingProfile()
+        {
+            //Domain to resource
+            CreateMap<Area, AreaResource>();
+            CreateMap<Role, RoleResource>();
+            CreateMap<User, UserGridResource>()
+                .ForMember(ug => ug.Roles,
+                opt => opt.MapFrom(u => u.UserRoles.Select(ur => new KeyValuePairResource
+                {
+                    Id = ur.Role.Id,
+                    Name = ur.Role.RoleName
+                })));
+
+            CreateMap<Function, FunctionResource>()
+                .ForMember(ug => ug.Functions,
+                    opt => opt.MapFrom(u => u.Functions.Select(f => new KeyValuePairResource
+                    {
+                        Id = f.Id,
+                        Name = f.FuctionName
+                    })))
+                .ForMember(ug => ug.Roles,
+                    opt => opt.MapFrom(u => u.RoleFunctions.Select(rf => new KeyValuePairResource
+                    {
+                        Id = rf.Role.Id,
+                        Name = rf.Role.RoleName
+                    })));
+
+            CreateMap<User, UserResource>()
+                .ForMember(ur => ur.UserInfoResource,
+                opt => opt.MapFrom(u => new UserInfoResource
+                {
+                    Address = u.Address,
+                    Phone = u.Phone,
+                    Email = u.Email,
+                    FullName = u.FullName,
+                    Avatar = u.Avatar,
+                    ConfirmPassword = u.ConfirmPassword,
+                    IsAccFacebook = u.IsAccFacebook,
+                    IsAccGoogle = u.IsAccGoogle,
+                    IsAccOutlook = u.IsAccOutlook,
+                    IsAccTwitter = u.IsAccTwitter,
+                    IsActive = u.IsActive,
+                    IsAdmin = u.IsAdmin,
+                    IsConfirm = u.IsConfirm,
+                    IsMember = u.IsMember,
+                    IsPartner = u.IsPartner,
+                    LoginFailed = u.LoginFailed,
+                    Password = u.Password,
+                    QuestionAnswer = u.QuestionAnswer,
+                    QuestionCode = u.QuestionCode,
+                    UserCode = u.UserCode,
+                    UserIdentifier = u.UserIdentifier
+                }))
+                .ForMember(rr => rr.Roles, opt => opt.MapFrom(u => u.UserRoles.Select(ur => new KeyValuePairResource
+                {
+                    Id = ur.Role.Id,
+                    Name = ur.Role.RoleName
+                })));
+
+            //Resource to domain
+            CreateMap<AreaResource, Area>().ForMember(ar => ar.Id, opt => opt.Ignore());
+            CreateMap<RoleResource, Role>().ForMember(rr => rr.Id, opt => opt.Ignore());
+            
+            UserResourceToDomain();
+            FunctionResourceToDomain();
         }
     }
 }

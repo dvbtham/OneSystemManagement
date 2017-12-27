@@ -1,15 +1,16 @@
 ﻿using System;
 
-namespace OneSystemAdminApi.Core.EntityLayer
+namespace OneSystemManagement.Controllers.Resources
 {
-    public class RoleFunction
+    public class RoleFunctionResource
     {
         public int Id { get; set; }
         public int IdRole { get; set; }
         public int IdFunction { get; set; }
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
-        public Function Function { get; set; }
-        public Role Role { get; set; }
+        public FunctionResource Function { get; set; }
+        public RoleResource Role { get; set; }
+        
     }
 }

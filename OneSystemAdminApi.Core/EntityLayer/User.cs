@@ -30,10 +30,8 @@ namespace OneSystemAdminApi.Core.EntityLayer
         public bool IsAdmin { get; set; }
         public string Address { get; set; }
         public string Avatar { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? LastLogin { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        
         public DateTime? CreateDate { get; set; }
         public int LoginFailed { get; set; }
         public string QuestionCode { get; set; }

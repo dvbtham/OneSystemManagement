@@ -1,45 +1,50 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using OneSystemAdminApi.Core.DataLayer;
+using OneSystemAdminApi.Core.EntityLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OneSystemAdminApi.Core.DataLayer;
-using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
 using OneSystemManagement.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace OneSystemManagement.Controllers.Api
 {
     [Produces("application/json")]
-    [Route("api/user")]
-    public class UserApiController : Controller
+    [Route("api/function")]
+    public class FunctionApiController : Controller
     {
-        private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Function> _functionRepository;
         private readonly IMapper _mapper;
-        public UserApiController(IRepository<User> userRepository, IMapper mapper)
+
+        public FunctionApiController(IRepository<Function> functionRepository, IMapper mapper)
         {
-            _userRepository = userRepository;
+            _functionRepository = functionRepository;
             _mapper = mapper;
         }
+
 
         #region CRUD Methods
 
         [HttpGet]
         public IActionResult GetAll(int pageSize = 10, int pageNumber = 1, string q = null)
         {
-            var response = new ListModelResponse<UserGridResource>();
-            var query = _userRepository.Query()
-                .Include(x => x.UserRoles).ThenInclude(ur => ur.Role)
+            var response = new ListModelResponse<FunctionResource>();
+            var query = _functionRepository.Query()
+                .Include(f => f.RoleFunctions)
+                    .ThenInclude(rf => rf.Role)
+                .Include(x => x.Functions)
+                .Include(x => x.FunctionProp)
                 .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
-                query = query.Where(x => x.FullName.ToLower().Contains(q.ToLower())
-                || x.Email.ToLower().Contains(q.ToLower())
-                || x.Phone.ToLower().Contains(q.ToLower())).ToList();
+                query = query.Where(x => x.FuctionName.ToLower().Contains(q.ToLower())
+                || x.CodeFuction.ToLower().Contains(q.ToLower())
+                || x.Description.ToLower().Contains(q.ToLower())).ToList();
             }
 
             try
@@ -47,7 +52,7 @@ namespace OneSystemManagement.Controllers.Api
                 response.PageSize = pageSize;
                 response.PageNumber = pageNumber;
 
-                response.Model = _mapper.Map<IEnumerable<User>, IEnumerable<UserGridResource>>(query);
+                response.Model = _mapper.Map<IEnumerable<Function>, IEnumerable<FunctionResource>>(query);
 
                 response.Message = string.Format("Total of records: {0}", response.Model.Count());
             }
@@ -63,11 +68,11 @@ namespace OneSystemManagement.Controllers.Api
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var response = new SingleModelResponse<UserGridResource>();
+            var response = new SingleModelResponse<FunctionResource>();
 
             try
             {
-                var entity = await GetUserWithRelated(id);
+                var entity = await GetFunctionWithRelated(id);
 
                 if (entity == null)
                 {
@@ -75,7 +80,7 @@ namespace OneSystemManagement.Controllers.Api
                     response.ErrorMessage = "Input could not be found.";
                     return response.ToHttpResponse();
                 }
-                var resource = new UserGridResource();
+                var resource = new FunctionResource();
                 _mapper.Map(entity, resource);
                 response.Model = resource;
             }
@@ -89,9 +94,9 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SaveUserResource resource)
+        public async Task<IActionResult> Create([FromBody] SaveFunctionResource resource)
         {
-            var response = new SingleModelResponse<UserGridResource>();
+            var response = new SingleModelResponse<FunctionResource>();
 
             if (resource == null)
             {
@@ -102,14 +107,13 @@ namespace OneSystemManagement.Controllers.Api
 
             try
             {
-                var user = new User();
-                _mapper.Map(resource, user);
+                var function = new Function();
+                _mapper.Map(resource, function);
 
-                user.CreateDate = DateTime.Now;
-                var entity = await _userRepository.AddAsync(user);
-                var entityMap = await GetUserWithRelated(entity.Id);
+                var entity = await _functionRepository.AddAsync(function);
+                var entityMap = await GetFunctionWithRelated(entity.Id);
 
-                response.Model = _mapper.Map<User, UserGridResource>(entityMap);
+                response.Model = _mapper.Map<Function, FunctionResource>(entityMap);
                 response.Message = "The data was saved successfully.";
             }
             catch (Exception ex)
@@ -122,13 +126,13 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SaveUserResource resource)
+        public async Task<IActionResult> Update(int id, [FromBody] SaveFunctionResource resource)
         {
-            var response = new SingleModelResponse<UserGridResource>();
+            var response = new SingleModelResponse<FunctionResource>();
 
             try
             {
-                var entity = await GetUserWithRelated(id);
+                var entity = await GetFunctionWithRelated(id);
 
                 if (entity == null || !ModelState.IsValid)
                 {
@@ -139,9 +143,11 @@ namespace OneSystemManagement.Controllers.Api
 
                 _mapper.Map(resource, entity);
 
-                await _userRepository.UpdateAsync(entity);
+                await _functionRepository.UpdateAsync(entity);
 
-                response.Model = _mapper.Map<User, UserGridResource>(entity);
+                var entityMap = await GetFunctionWithRelated(entity.Id);
+
+                response.Model = _mapper.Map<Function, FunctionResource>(entityMap);
                 response.Message = "The data was saved successfully";
             }
             catch (Exception ex)
@@ -156,13 +162,13 @@ namespace OneSystemManagement.Controllers.Api
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var response = new SingleModelResponse<UserGridResource>();
+            var response = new SingleModelResponse<FunctionResource>();
 
             try
             {
-                var entity = await _userRepository.DeleteAsync(id);
+                var entity = await _functionRepository.DeleteAsync(id);
 
-                response.Model = _mapper.Map<User, UserGridResource>(entity);
+                response.Model = _mapper.Map<Function, FunctionResource>(entity);
                 response.Message = "The record was deleted successfully";
             }
             catch (Exception ex)
@@ -174,11 +180,13 @@ namespace OneSystemManagement.Controllers.Api
             return response.ToHttpResponse();
         }
 
-        private async Task<User> GetUserWithRelated(int id)
+        private async Task<Function> GetFunctionWithRelated(int id)
         {
-            var entity = await _userRepository.Query()
-                  .Include(x => x.UserRoles)
-                      .ThenInclude(ur => ur.Role)
+            var entity = await _functionRepository.Query()
+                .Include(f => f.RoleFunctions)
+                    .ThenInclude(rf => rf.Role)
+                .Include(x => x.Functions)
+                .Include(x => x.FunctionProp)
                   .SingleOrDefaultAsync(x => x.Id == id);
 
             return entity;

@@ -28,7 +28,7 @@ namespace OneSystemAdminApi.Core.EntityMapping
                     .HasForeignKey(d => d.IdArea)
                     .HasConstraintName("FK_Functions_Areas");
 
-                entity.HasOne(d => d.FunctionNav)
+                entity.HasOne(d => d.FunctionProp)
                     .WithMany(p => p.Functions)
                     .HasForeignKey(d => d.IdFunctionParent)
                     .HasConstraintName("FK_Functions_Functions");

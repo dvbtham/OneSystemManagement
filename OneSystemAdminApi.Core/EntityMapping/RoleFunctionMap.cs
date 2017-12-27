@@ -15,13 +15,13 @@ namespace OneSystemAdminApi.Core.EntityMapping
                 entity.HasOne(d => d.Function)
                     .WithMany(p => p.RoleFunctions)
                     .HasForeignKey(d => d.IdFunction)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_RoleFunctions_Functions");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.RoleFunctions)
                     .HasForeignKey(d => d.IdRole)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_RoleFunctions_Roles");
             });
         }

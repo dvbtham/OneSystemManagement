@@ -11,5 +11,10 @@ namespace OneSystemManagement.Controllers.Resources
 
         public RoleResource Role { get; set; }
         public UserResource User { get; set; }
+
+        public UserRoleResource()
+        {
+            CreateDate = DateTime.Now;
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OneSystemManagement.Controllers.Resources
 {
-    public class UserSaveResource
+    public class SaveUserResource
     {
         public int Id { get; set; }
 
@@ -47,6 +47,6 @@ namespace OneSystemManagement.Controllers.Resources
         public DateTime? LastLogin { get; set; }
         public DateTime? CreateDate { get; set; }
 
-        public ICollection<KeyValuePairResource> Roles { get; set; }
+        public ICollection<KeyValuePairResource> Roles { get; set; }  = new List<KeyValuePairResource>();
     }
 }

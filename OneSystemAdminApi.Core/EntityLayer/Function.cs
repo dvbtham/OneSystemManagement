@@ -19,7 +19,7 @@ namespace OneSystemAdminApi.Core.EntityLayer
         public string Url { get; set; }
 
         public Area Area { get; set; }
-        public Function FunctionNav { get; set; }
+        public Function FunctionProp { get; set; }
         public ICollection<Function> Functions { get; set; }
         public ICollection<RoleFunction> RoleFunctions { get; set; }
     }
