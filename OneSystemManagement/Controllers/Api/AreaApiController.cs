@@ -7,7 +7,7 @@ namespace OneSystemManagement.Controllers.Api
 {
     [Produces("application/json")]
     [Route("api/area")]
-    public class AreaApiController : Controller
+    public class AreaApiController : BaseApiController
     {
         private readonly IAreaService _areaService;
 

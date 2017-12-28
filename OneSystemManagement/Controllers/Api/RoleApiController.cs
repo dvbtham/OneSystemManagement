@@ -7,7 +7,7 @@ namespace OneSystemManagement.Controllers.Api
 {
     [Produces("application/json")]
     [Route("api/role")]
-    public class RoleApiController : Controller
+    public class RoleApiController : BaseApiController
     {
         #region ctor
         private readonly IRoleService _roleService;

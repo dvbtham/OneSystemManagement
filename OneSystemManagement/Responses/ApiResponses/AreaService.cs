@@ -86,6 +86,13 @@ namespace OneSystemManagement.Responses.ApiResponses
         {
             var response = new SingleModelResponse<AreaResource>();
 
+            if (resource == null)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "Input cannot be null.";
+                return response.ToHttpResponse();
+            }
+
             try
             {
                 var area = new Area();
@@ -109,6 +116,12 @@ namespace OneSystemManagement.Responses.ApiResponses
         {
             var response = new SingleModelResponse<AreaResource>();
 
+            if (resource == null)
+            {
+                response.DidError = true;
+                response.ErrorMessage = "Input cannot be null.";
+                return response.ToHttpResponse();
+            }
             try
             {
                 var area = await _areaRepository.FindAsync(x => x.Id == id);
@@ -165,7 +178,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _areaRepository?.Dispose();
         }

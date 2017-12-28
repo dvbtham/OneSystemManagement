@@ -7,7 +7,7 @@ namespace OneSystemManagement.Controllers.Api
 {
     [Produces("application/json")]
     [Route("api/function")]
-    public class FunctionApiController : Controller
+    public class FunctionApiController : BaseApiController
     {
         private readonly IFunctionService _functionService;
 

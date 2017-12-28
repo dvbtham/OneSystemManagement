@@ -227,7 +227,7 @@ namespace OneSystemManagement.Responses.ApiResponses
 
         #endregion
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _userRepository?.Dispose();
         }

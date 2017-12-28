@@ -174,7 +174,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _roleRepository?.Dispose();
         }
