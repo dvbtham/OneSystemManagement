@@ -127,10 +127,12 @@ namespace OneSystemManagement.Core.Mapping
                     Name = ur.Role.RoleName
                 })));
 
+            CreateMap<UserConfig, UserConfigResource>().ForMember(x => x.Id, opt => opt.Ignore());
+            
             //Resource to domain
             CreateMap<AreaResource, Area>().ForMember(ar => ar.Id, opt => opt.Ignore());
             CreateMap<RoleResource, Role>().ForMember(rr => rr.Id, opt => opt.Ignore());
-            
+
             UserResourceToDomain();
             FunctionResourceToDomain();
         }

@@ -4,8 +4,17 @@ using System.Text;
 
 namespace OneSystemManagement.Core.Extensions
 {
+    /// <summary>
+    /// Password security manager.
+    /// </summary>
     public static class PasswordManager
     {
+        /// <summary>
+        /// Get hashed password by input string.
+        /// </summary>
+        /// <param name="md5Hash"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string GetMd5Hash(MD5 md5Hash, string input)
         {
             // Convert the input string to a byte array and compute the hash.
@@ -25,8 +34,14 @@ namespace OneSystemManagement.Core.Extensions
             // Return the hexadecimal string.
             return sBuilder.ToString();
         }
-
-        // Verify a hash against a string.
+        
+        /// <summary>
+        ///  Verify a hash against a string.
+        /// </summary>
+        /// <param name="md5Hash"></param>
+        /// <param name="input"></param>
+        /// <param name="hash"></param>
+        /// <returns></returns>
         public static bool VerifyMd5Hash(MD5 md5Hash, string input, string hash)
         {
             // Hash the input.

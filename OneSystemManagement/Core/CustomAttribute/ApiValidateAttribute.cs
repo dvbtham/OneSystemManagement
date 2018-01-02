@@ -28,7 +28,8 @@ namespace OneSystemManagement.Core.CustomAttribute
         {
             var response = new ListModelResponse<string>();
             // Check given api key and current api key.
-            if (_apiKey == "one")
+            // this api key for demo purpose.
+            if (_apiKey == Ultilities.Constants.ApiValue)
             {
                 base.OnResultExecuting(context);
                 return;

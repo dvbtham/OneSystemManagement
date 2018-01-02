@@ -15,7 +15,8 @@ namespace OneSystemAdminApi.Core.DataLayer
                 new RoleFunctionMap(),
                 new RoleMap(),
                 new UserMap(),
-                new UserRoleMap()
+                new UserRoleMap(),
+                new UserConfigMap()
             };
         }
     }
