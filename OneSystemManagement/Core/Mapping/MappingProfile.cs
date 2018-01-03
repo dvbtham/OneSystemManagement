@@ -52,20 +52,20 @@ namespace OneSystemManagement.Core.Mapping
             CreateMap<SaveFunctionResource, Function>()
                 .ForMember(f => f.Id, opt => opt.Ignore())
                 .ForMember(f => f.RoleFunctions, opt => opt.Ignore())
-                .AfterMap((usr, u) =>
+                .AfterMap((fr, f) =>
                 {
                     //Remove unselected Roles
-                    var removedRoles = u.RoleFunctions.Where(f => !usr.Roles.Contains(f.IdRole)).ToList();
-                    foreach (var f in removedRoles)
-                        u.RoleFunctions.Remove(f);
+                    var removedRoles = f.RoleFunctions.Where(rf => !fr.Roles.Contains(rf.IdRole)).ToList();
+                    foreach (var rmf in removedRoles)
+                        f.RoleFunctions.Remove(rmf);
 
                     // Add new Roles
-                    var addedRoles = usr.Roles
-                        .Where(id => u.RoleFunctions.All(x => x.IdRole != id))
+                    var addedRoles = fr.Roles
+                        .Where(id => f.RoleFunctions.All(x => x.IdRole != id))
                         .Select(id => new RoleFunction { IdRole = id }).ToList();
 
-                    foreach (var f in addedRoles)
-                        u.RoleFunctions.Add(f);
+                    foreach (var arf in addedRoles)
+                        f.RoleFunctions.Add(arf);
                 });
         }
         public MappingProfile()
@@ -127,8 +127,15 @@ namespace OneSystemManagement.Core.Mapping
                     Name = ur.Role.RoleName
                 })));
 
-            CreateMap<UserConfig, UserConfigResource>().ForMember(x => x.Id, opt => opt.Ignore());
-            
+            CreateMap<UserConfig, UserConfigResource>()
+                .ForMember(x => x.User, opt => opt.MapFrom(uc => new UserResultResource
+                {
+                    Email = uc.User.Email,
+                    FullName = uc.User.FullName,
+                    UserCode = uc.User.UserCode,
+                    Id = uc.User.Id
+                }));
+
             //Resource to domain
             CreateMap<AreaResource, Area>().ForMember(ar => ar.Id, opt => opt.Ignore());
             CreateMap<RoleResource, Role>().ForMember(rr => rr.Id, opt => opt.Ignore());

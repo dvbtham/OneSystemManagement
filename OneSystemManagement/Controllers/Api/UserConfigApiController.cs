@@ -7,7 +7,7 @@ namespace OneSystemManagement.Controllers.Api
 {
     [Produces("application/json")]
     [Route("api/userconfig")]
-    public class UserConfigApiController : Controller
+    public class UserConfigApiController : BaseApiController
     {
         private readonly IUserConfigService _userConfigService;
 
@@ -49,6 +49,11 @@ namespace OneSystemManagement.Controllers.Api
             return await _userConfigService.Delete(id);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            _userConfigService?.Dispose();
+            base.Dispose(disposing);
+        }
         #endregion
 
     }

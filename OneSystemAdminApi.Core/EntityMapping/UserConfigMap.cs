@@ -10,8 +10,6 @@ namespace OneSystemAdminApi.Core.EntityMapping
         {
             modelBuilder.Entity<UserConfig>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.ApiCode).HasMaxLength(250);
 
                 entity.Property(e => e.ApiKey).HasMaxLength(500);

@@ -9,6 +9,6 @@
         public string Description { get; set; }
         public bool? IsActive { get; set; }
 
-        public UserGridResource User { get; set; }
+        public UserResultResource User { get; set; }
     }
 }

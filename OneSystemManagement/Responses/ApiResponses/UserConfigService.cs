@@ -35,15 +35,24 @@ namespace OneSystemManagement.Responses.ApiResponses
                 PageSize = (int)pageSize,
                 PageNumber = (int)pageNumber
             };
-            var query = _userConfigRepository.Query()
+            var query = _userConfigRepository.Query().Include(x => x.User)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
-                query = query.Where(x => x.ApiCode.ToLower().Contains(q.ToLower())
-                                         || x.ApiKey.ToLower().Contains(q.ToLower())).ToList();
+                query = query.Where(x => x.ApiCode.ToLower().Contains(q)
+                                         || x.ApiKey.ToLower().Contains(q))
+                                         .ToList();
+
+                if (query.Count(x => x.User != null) > 0)
+                {
+                    query = query.Where(x => x.ApiCode.ToLower().Contains(q)
+                                             || x.ApiKey.ToLower().Contains(q) 
+                                             || x.User.FullName.ToLower().Contains(q))
+                                             .ToList();
+                }
             }
 
             try
@@ -163,7 +172,7 @@ namespace OneSystemManagement.Responses.ApiResponses
 
             try
             {
-               var entity = await _userConfigRepository.DeleteAsync(id);
+                var entity = await _userConfigRepository.DeleteAsync(id);
 
                 var resource = new UserConfigResource();
                 response.Model = _mapper.Map(entity, resource);
