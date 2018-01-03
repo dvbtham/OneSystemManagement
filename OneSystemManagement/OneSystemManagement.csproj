@@ -29,7 +29,6 @@
     <Folder Include="Areas\SystemAdmin\Data\" />
     <Folder Include="Areas\SystemAdmin\Models\" />
     <Folder Include="Areas\SystemAdmin\Views\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
 
   <ItemGroup>
