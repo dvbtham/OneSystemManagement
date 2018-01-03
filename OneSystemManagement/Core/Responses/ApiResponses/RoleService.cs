@@ -30,7 +30,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 PageNumber = (int)pageNumber
             };
 
-            var query = Queryable.Skip<Role>(_roleRepository.Query(), (response.PageNumber - 1) * response.PageSize)
+            var query = _roleRepository.Query().Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
@@ -44,7 +44,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             {
                 response.Model = _mapper.Map(query, response.Model);
 
-                response.Message = string.Format("Total of records: {0}", Enumerable.Count<RoleResource>(response.Model));
+                response.Message = string.Format("Total of records: {0}", response.Model.Count());
             }
             catch (Exception ex)
             {
@@ -147,7 +147,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
             try
             {
-                var rolesToDelete = await EntityFrameworkQueryableExtensions.SingleOrDefaultAsync<Role>(_roleRepository.Query().Include(x => x.UserRoles), x => x.Id == id);
+                var rolesToDelete = await _roleRepository.Query().Include(x => x.UserRoles).SingleOrDefaultAsync(x => x.Id == id);
 
                 if (rolesToDelete == null)
                 {

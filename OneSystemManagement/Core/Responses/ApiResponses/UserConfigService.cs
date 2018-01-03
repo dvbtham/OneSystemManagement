@@ -34,7 +34,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 PageSize = (int)pageSize,
                 PageNumber = (int)pageNumber
             };
-            var query = EntityFrameworkQueryableExtensions.Include<UserConfig, User>(_userConfigRepository.Query(), x => x.User)
+            var query = _userConfigRepository.Query().Include(x => x.User)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
 
@@ -58,7 +58,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             {
                 response.Model = _mapper.Map(query, response.Model);
 
-                response.Message = string.Format("Total of records: {0}", Enumerable.Count<UserConfigResource>(response.Model));
+                response.Message = string.Format("Total of records: {0}", response.Model.Count());
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
             try
             {
-                var entity = await EntityFrameworkQueryableExtensions.FirstOrDefaultAsync<UserConfig>(_userConfigRepository.Query(), x => x.Id == id);
+                var entity = await _userConfigRepository.Query().FirstOrDefaultAsync(x => x.Id == id);
 
                 if (entity == null)
                 {

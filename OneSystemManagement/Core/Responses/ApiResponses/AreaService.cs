@@ -27,7 +27,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 PageSize = (int)pageSize,
                 PageNumber = (int)pageNumber
             };
-            var query = Queryable.Skip<Area>(_areaRepository.Query().Include(x => x.Functions), (response.PageNumber - 1) * response.PageSize)
+            var query = _areaRepository.Query().Include(x => x.Functions).Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
@@ -41,7 +41,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             {
                 response.Model = _mapper.Map(query, response.Model);
 
-                response.Message = string.Format("Total of records: {0}", Enumerable.Count<AreaResource>(response.Model));
+                response.Message = string.Format("Total of records: {0}", response.Model.Count());
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
             try
             {
-                var entity = await EntityFrameworkQueryableExtensions.FirstOrDefaultAsync<Area>(_areaRepository.Query().Include(x => x.Functions), x => x.Id == id);
+                var entity = await _areaRepository.Query().Include(x => x.Functions).FirstOrDefaultAsync(x => x.Id == id);
 
                 if (entity == null)
                 {
@@ -153,7 +153,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
             try
             {
-                var areaWithFunctions = await EntityFrameworkQueryableExtensions.SingleOrDefaultAsync<Area>(_areaRepository.Query().Include(x => x.Functions), x => x.Id == id);
+                var areaWithFunctions = await _areaRepository.Query().Include(x => x.Functions).SingleOrDefaultAsync(x => x.Id == id);
 
                 foreach (var function in areaWithFunctions.Functions)
                 {

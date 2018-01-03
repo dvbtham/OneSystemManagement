@@ -33,7 +33,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 PageNumber = (int)pageNumber,
                 PageSize = (int)pageSize
             };
-            var query = Queryable.Where<User>(_userRepository.Query(), x => x.IsActive)
+            var query = _userRepository.Query().Where(x => x.IsActive)
                 .Include(x => x.UserRoles).ThenInclude(ur => ur.Role)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
@@ -50,7 +50,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             {
                 response.Model = _mapper.Map<IEnumerable<User>, IEnumerable<UserGridResource>>(query);
 
-                response.Message = string.Format("Total of records: {0}", Enumerable.Count<UserGridResource>(response.Model));
+                response.Message = string.Format("Total of records: {0}", response.Model.Count());
             }
             catch (Exception ex)
             {
@@ -217,7 +217,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         public async Task<bool> Login(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return false;
-            var user = await EntityFrameworkQueryableExtensions.SingleOrDefaultAsync<User>(_userRepository.Query(), x => x.Email == email);
+            var user = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
             if (user == null) return false;
 
             var md5Hash = MD5.Create();
