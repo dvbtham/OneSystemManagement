@@ -8,41 +8,57 @@ using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
 
-namespace OneSystemManagement.Responses.ApiResponses
+namespace OneSystemManagement.Core.Responses.ApiResponses
 {
-    public class AreaService : IAreaService
+    public interface IUserConfigService : IDisposable
     {
-        private readonly IRepository<Area> _areaRepository;
+        IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null);
+        Task<IActionResult> GetAsync(int id);
+        Task<IActionResult> Create(UserConfigResource resource);
+        Task<IActionResult> Update(int id, UserConfigResource resource);
+        Task<IActionResult> Delete(int id);
+    }
+    public class UserConfigService : IUserConfigService
+    {
+        private readonly IRepository<UserConfig> _userConfigRepository;
         private readonly IMapper _mapper;
-        public AreaService(IRepository<Area> areaRepository, IMapper mapper)
+        public UserConfigService(IRepository<UserConfig> areaRepository, IMapper mapper)
         {
-            _areaRepository = areaRepository;
+            _userConfigRepository = areaRepository;
             _mapper = mapper;
         }
-
         public IActionResult GetAll(int? pageSize, int? pageNumber, string q = null)
         {
-            var response = new ListModelResponse<AreaResource>
+            var response = new ListModelResponse<UserConfigResource>
             {
                 PageSize = (int)pageSize,
                 PageNumber = (int)pageNumber
             };
-            var query = _areaRepository.Query().Include(x => x.Functions)
+            var query = EntityFrameworkQueryableExtensions.Include<UserConfig, User>(_userConfigRepository.Query(), x => x.User)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
-                query = query.Where(x => x.AreaName.ToLower().Contains(q.ToLower())
-                                         || x.CodeArea.ToLower().Contains(q.ToLower())).ToList();
+                query = query.Where(x => x.ApiCode.ToLower().Contains(q)
+                                         || x.ApiKey.ToLower().Contains(q))
+                                         .ToList();
+
+                if (query.Count(x => x.User != null) > 0)
+                {
+                    query = query.Where(x => x.ApiCode.ToLower().Contains(q)
+                                             || x.ApiKey.ToLower().Contains(q) 
+                                             || x.User.FullName.ToLower().Contains(q))
+                                             .ToList();
+                }
             }
 
             try
             {
                 response.Model = _mapper.Map(query, response.Model);
 
-                response.Message = string.Format("Total of records: {0}", response.Model.Count());
+                response.Message = string.Format("Total of records: {0}", Enumerable.Count<UserConfigResource>(response.Model));
             }
             catch (Exception ex)
             {
@@ -55,12 +71,11 @@ namespace OneSystemManagement.Responses.ApiResponses
 
         public async Task<IActionResult> GetAsync(int id)
         {
-            var response = new SingleModelResponse<AreaResource>();
+            var response = new SingleModelResponse<UserConfigResource>();
 
             try
             {
-                var entity = await _areaRepository.Query().Include(x => x.Functions)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                var entity = await EntityFrameworkQueryableExtensions.FirstOrDefaultAsync<UserConfig>(_userConfigRepository.Query(), x => x.Id == id);
 
                 if (entity == null)
                 {
@@ -69,7 +84,7 @@ namespace OneSystemManagement.Responses.ApiResponses
                     return response.ToHttpResponse();
                 }
 
-                var resource = new AreaResource();
+                var resource = new UserConfigResource();
                 _mapper.Map(entity, resource);
                 response.Model = resource;
             }
@@ -82,9 +97,9 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public async Task<IActionResult> Create(AreaResource resource)
+        public async Task<IActionResult> Create(UserConfigResource resource)
         {
-            var response = new SingleModelResponse<AreaResource>();
+            var response = new SingleModelResponse<UserConfigResource>();
 
             if (resource == null)
             {
@@ -95,12 +110,12 @@ namespace OneSystemManagement.Responses.ApiResponses
 
             try
             {
-                var area = new Area();
-                _mapper.Map(resource, area);
+                var entity = new UserConfig();
+                _mapper.Map(resource, entity);
 
-                var entity = await _areaRepository.AddAsync(area);
+                var result = await _userConfigRepository.AddAsync(entity);
 
-                response.Model = _mapper.Map(entity, resource);
+                response.Model = _mapper.Map(result, resource);
                 response.Message = "The data was saved successfully";
             }
             catch (Exception ex)
@@ -112,9 +127,9 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public async Task<IActionResult> Update(int id, AreaResource resource)
+        public async Task<IActionResult> Update(int id, UserConfigResource resource)
         {
-            var response = new SingleModelResponse<AreaResource>();
+            var response = new SingleModelResponse<UserConfigResource>();
 
             if (resource == null)
             {
@@ -124,7 +139,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             }
             try
             {
-                var area = await _areaRepository.FindAsync(x => x.Id == id);
+                var area = await _userConfigRepository.FindAsync(x => x.Id == id);
 
                 if (area == null || resource == null)
                 {
@@ -135,7 +150,7 @@ namespace OneSystemManagement.Responses.ApiResponses
 
                 _mapper.Map(resource, area);
 
-                await _areaRepository.UpdateAsync(area);
+                await _userConfigRepository.UpdateAsync(area);
 
                 response.Model = _mapper.Map(area, resource);
                 response.Message = "The data was saved successfully";
@@ -151,21 +166,13 @@ namespace OneSystemManagement.Responses.ApiResponses
 
         public async Task<IActionResult> Delete(int id)
         {
-            var response = new SingleModelResponse<AreaResource>();
+            var response = new SingleModelResponse<UserConfigResource>();
 
             try
             {
-                var areaWithFunctions = await _areaRepository.Query().Include(x => x.Functions)
-                    .SingleOrDefaultAsync(x => x.Id == id);
+                var entity = await _userConfigRepository.DeleteAsync(id);
 
-                foreach (var function in areaWithFunctions.Functions)
-                {
-                    function.IdArea = null;
-                }
-
-                var entity = await _areaRepository.DeleteAsync(id);
-
-                var resource = new AreaResource();
+                var resource = new UserConfigResource();
                 response.Model = _mapper.Map(entity, resource);
                 response.Message = "The record was deleted successfully";
             }
@@ -178,9 +185,10 @@ namespace OneSystemManagement.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
-        public virtual void Dispose()
+
+        public void Dispose()
         {
-            _areaRepository?.Dispose();
+            _userConfigRepository?.Dispose();
         }
     }
 }

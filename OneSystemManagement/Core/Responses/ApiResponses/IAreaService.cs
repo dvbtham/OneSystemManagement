@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OneSystemManagement.Controllers.Resources;
 
-namespace OneSystemManagement.Responses.ApiResponses
+namespace OneSystemManagement.Core.Responses.ApiResponses
 {
-    public interface IRoleService : IDisposable
+    public interface IAreaService : IDisposable
     {
         IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null);
         Task<IActionResult> GetAsync(int id);
-        Task<IActionResult> Create(RoleResource resource);
-        Task<IActionResult> Update(int id, RoleResource resource);
+        Task<IActionResult> Create(AreaResource resource);
+        Task<IActionResult> Update(int id, AreaResource resource);
         Task<IActionResult> Delete(int id);
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
 
-namespace OneSystemManagement.Responses.ApiResponses
+namespace OneSystemManagement.Core.Responses.ApiResponses
 {
     public interface IFunctionService : IDisposable
     {

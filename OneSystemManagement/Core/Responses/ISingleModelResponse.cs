@@ -1,4 +1,4 @@
-﻿namespace OneSystemManagement.Responses
+﻿namespace OneSystemManagement.Core.Responses
 {
     public interface ISingleModelResponse<TModel> : IResponse
     {

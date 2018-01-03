@@ -2,7 +2,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
-namespace OneSystemManagement.Responses
+namespace OneSystemManagement.Core.Responses
 {
     public static class ResponseExtensions
     {

@@ -11,7 +11,7 @@ using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
 using OneSystemManagement.Core.Extensions;
 
-namespace OneSystemManagement.Responses.ApiResponses
+namespace OneSystemManagement.Core.Responses.ApiResponses
 {
     public class UserService : IUserService
     {
@@ -33,7 +33,7 @@ namespace OneSystemManagement.Responses.ApiResponses
                 PageNumber = (int)pageNumber,
                 PageSize = (int)pageSize
             };
-            var query = _userRepository.Query().Where(x => x.IsActive)
+            var query = Queryable.Where<User>(_userRepository.Query(), x => x.IsActive)
                 .Include(x => x.UserRoles).ThenInclude(ur => ur.Role)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
@@ -50,7 +50,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             {
                 response.Model = _mapper.Map<IEnumerable<User>, IEnumerable<UserGridResource>>(query);
 
-                response.Message = string.Format("Total of records: {0}", response.Model.Count());
+                response.Message = string.Format("Total of records: {0}", Enumerable.Count<UserGridResource>(response.Model));
             }
             catch (Exception ex)
             {
@@ -106,7 +106,7 @@ namespace OneSystemManagement.Responses.ApiResponses
                 var user = new User();
                 _mapper.Map(resource, user);
 
-                if (_userRepository.Query().Any(x => x.Email == resource.UserInfo.Email))
+                if (Queryable.Any<User>(_userRepository.Query(), x => x.Email == resource.UserInfo.Email))
                 {
                     response.DidError = true;
                     response.ErrorMessage = "This email is already register.";
@@ -199,7 +199,7 @@ namespace OneSystemManagement.Responses.ApiResponses
         {
             if (include)
             {
-                var entityTrue = await _userRepository.Query().Where(x => x.IsActive)
+                var entityTrue = await Queryable.Where<User>(_userRepository.Query(), x => x.IsActive)
                     .Include(x => x.UserRoles)
                     .ThenInclude(ur => ur.Role)
                     .SingleOrDefaultAsync(x => x.Id == id);
@@ -207,7 +207,7 @@ namespace OneSystemManagement.Responses.ApiResponses
                 return entityTrue;
             }
 
-            var entityFalse = await _userRepository.Query().Where(x => x.IsActive).SingleOrDefaultAsync(x => x.Id == id);
+            var entityFalse = await Queryable.Where<User>(_userRepository.Query(), x => x.IsActive).SingleOrDefaultAsync(x => x.Id == id);
 
             return entityFalse;
 
@@ -216,7 +216,7 @@ namespace OneSystemManagement.Responses.ApiResponses
        public async Task<bool> Login(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return false;
-            var user = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
+            var user = await EntityFrameworkQueryableExtensions.SingleOrDefaultAsync<User>(_userRepository.Query(), x => x.Email == email);
             if (user == null) return false;
 
             var md5Hash = MD5.Create();

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
 
-namespace OneSystemManagement.Responses.ApiResponses
+namespace OneSystemManagement.Core.Responses.ApiResponses
 {
     public class UserRoleService : IUserRoleService
     {

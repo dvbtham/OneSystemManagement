@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OneSystemManagement.Responses
+namespace OneSystemManagement.Core.Responses
 {
     public class SingleModelResponse<TModel> : ISingleModelResponse<TModel>
     {

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using OneSystemAdminApi.Core.EntityLayer;
 
-namespace OneSystemManagement.Responses.ApiResponses
+namespace OneSystemManagement.Core.Responses.ApiResponses
 {
     public interface IRoleFunctionService
     {

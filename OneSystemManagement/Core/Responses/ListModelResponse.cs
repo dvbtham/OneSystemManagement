@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OneSystemManagement.Responses
+namespace OneSystemManagement.Core.Responses
 {
     public class ListModelResponse<TModel> : IListModelResponse<TModel>
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OneSystemManagement.Responses
+namespace OneSystemManagement.Core.Responses
 {
     public interface IResponse
     {

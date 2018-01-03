@@ -1,6 +1,4 @@
-using System;
-
-namespace OneSystemManagement.Models
+namespace OneSystemManagement.Core.ViewModels
 {
     public class ErrorViewModel
     {

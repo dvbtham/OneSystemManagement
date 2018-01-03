@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using OneSystemManagement.Controllers.Resources;
-using OneSystemManagement.Responses.ApiResponses;
 
 namespace OneSystemManagement.Controllers.Api
 {

@@ -4,7 +4,6 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OneSystemManagement.Responses.ApiResponses;
 
 namespace OneSystemManagement.Core.Extensions
 {

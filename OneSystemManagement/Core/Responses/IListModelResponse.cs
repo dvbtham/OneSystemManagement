@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace OneSystemManagement.Responses
+namespace OneSystemManagement.Core.Responses
 {
     public interface IListModelResponse<TModel> : IResponse
     {

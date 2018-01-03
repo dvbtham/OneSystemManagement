@@ -9,7 +9,7 @@ using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
 
-namespace OneSystemManagement.Responses.ApiResponses
+namespace OneSystemManagement.Core.Responses.ApiResponses
 {
     public class FunctionService : IFunctionService
     {
@@ -34,11 +34,10 @@ namespace OneSystemManagement.Responses.ApiResponses
                 PageSize = (int)pageSize,
                 PageNumber = (int)pageNumber
             };
-            var query = _functionRepository.Query()
-                .Include(f => f.RoleFunctions)
-                .ThenInclude(rf => rf.Role)
-                .Include(x => x.Functions)
-                .Include(x => x.FunctionProp)
+            var query = EntityFrameworkQueryableExtensions.Include<Function, Function>(_functionRepository.Query()
+                    .Include(f => f.RoleFunctions)
+                    .ThenInclude(rf => rf.Role)
+                    .Include(x => x.Functions), x => x.FunctionProp)
                 .Include(x => x.Area)
                 .Skip((response.PageNumber - 1) * response.PageSize)
                 .Take(response.PageSize).ToList();
@@ -56,7 +55,7 @@ namespace OneSystemManagement.Responses.ApiResponses
             {
                 response.Model = _mapper.Map<IEnumerable<Function>, IEnumerable<FunctionResource>>(query);
 
-                response.Message = string.Format("Total of records: {0}", response.Model.Count());
+                response.Message = string.Format("Total of records: {0}", Enumerable.Count<FunctionResource>(response.Model));
             }
             catch (Exception ex)
             {
@@ -173,7 +172,7 @@ namespace OneSystemManagement.Responses.ApiResponses
                     return response.ToHttpResponse();
                 }
 
-                await _roleFunctionService.Delete(entity.RoleFunctions.ToList());
+                await _roleFunctionService.Delete(Enumerable.ToList<RoleFunction>(entity.RoleFunctions));
 
                 await _functionRepository.DeleteAsync(entity.Id);
 
@@ -193,17 +192,15 @@ namespace OneSystemManagement.Responses.ApiResponses
         {
             if (!include)
             {
-                var entityFalse = await _functionRepository.Query()
-                    .SingleOrDefaultAsync(x => x.Id == id);
+                var entityFalse = await EntityFrameworkQueryableExtensions.SingleOrDefaultAsync<Function>(_functionRepository.Query(), x => x.Id == id);
 
                 return entityFalse;
             }
 
-            var entity = await _functionRepository.Query()
-                .Include(f => f.RoleFunctions)
-                .ThenInclude(rf => rf.Role)
-                .Include(x => x.Functions)
-                .Include(x => x.FunctionProp)
+            var entity = await EntityFrameworkQueryableExtensions.Include<Function, Function>(_functionRepository.Query()
+                    .Include(f => f.RoleFunctions)
+                    .ThenInclude(rf => rf.Role)
+                    .Include(x => x.Functions), x => x.FunctionProp)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             return entity;
