@@ -199,21 +199,22 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         {
             if (include)
             {
-                var entityTrue = await Queryable.Where<User>(_userRepository.Query(), x => x.IsActive)
+                var entityTrue = await _userRepository.Query().Where(x => x.IsActive)
                     .Include(x => x.UserRoles)
                     .ThenInclude(ur => ur.Role)
+                    .Include(x => x.UserConfigs)
                     .SingleOrDefaultAsync(x => x.Id == id);
 
                 return entityTrue;
             }
 
-            var entityFalse = await Queryable.Where<User>(_userRepository.Query(), x => x.IsActive).SingleOrDefaultAsync(x => x.Id == id);
+            var entityFalse = await _userRepository.Query().Where(x => x.IsActive).SingleOrDefaultAsync(x => x.Id == id);
 
             return entityFalse;
 
         }
 
-       public async Task<bool> Login(string email, string password)
+        public async Task<bool> Login(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return false;
             var user = await EntityFrameworkQueryableExtensions.SingleOrDefaultAsync<User>(_userRepository.Query(), x => x.Email == email);

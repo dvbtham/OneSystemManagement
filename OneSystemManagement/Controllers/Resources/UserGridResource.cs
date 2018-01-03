@@ -37,5 +37,6 @@ namespace OneSystemManagement.Controllers.Resources
         public DateTime? CreateDate { get; set; }
 
         public ICollection<KeyValuePairResource> Roles { get; set; }  = new List<KeyValuePairResource>();
+        public ICollection<UserConfigResource> UserConfigs { get; set; }  = new List<UserConfigResource>();
     }
 }
