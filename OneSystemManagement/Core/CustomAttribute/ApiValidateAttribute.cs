@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using OneSystemManagement.Core.Responses;
 
 namespace OneSystemManagement.Core.CustomAttribute
 {
