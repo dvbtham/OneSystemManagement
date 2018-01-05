@@ -2,6 +2,7 @@
 using AutoMapper;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
+using OneSystemManagement.Core.ViewModels;
 
 namespace OneSystemManagement.Core.Mapping
 {
@@ -72,6 +73,14 @@ namespace OneSystemManagement.Core.Mapping
         {
             //Domain to resource
             CreateMap<Area, AreaResource>();
+            CreateMap<Area, AreaViewModel>()
+                .ForMember(avm => avm.Functions, 
+                opt => opt.MapFrom(a => a.Functions.Select(f => new KeyValuePairResource
+                {
+                    Id = f.Id,
+                    Name = f.FuctionName
+                })));
+
             CreateMap<Role, RoleResource>();
             CreateMap<User, UserGridResource>()
                 .ForMember(ug => ug.Roles,
@@ -138,10 +147,13 @@ namespace OneSystemManagement.Core.Mapping
 
             //Resource to domain
             CreateMap<AreaResource, Area>().ForMember(ar => ar.Id, opt => opt.Ignore());
+            CreateMap<AreaViewModel, Area>();
             CreateMap<RoleResource, Role>().ForMember(rr => rr.Id, opt => opt.Ignore());
 
             UserResourceToDomain();
             FunctionResourceToDomain();
+
+
         }
     }
 }

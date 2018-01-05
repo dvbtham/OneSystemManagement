@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OneSystemAdminApi.Core.DataLayer;
 using OneSystemManagement.Core.Extensions;
@@ -35,7 +36,10 @@ namespace OneSystemManagement
         {
             services
                 .AddMvc()
-                .AddJsonOptions(a => a.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+                .AddJsonOptions(a => a.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
+                .AddJsonOptions(a => a.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
+
             services.AddMvc();
             services.AddEntityFrameworkSqlServer().AddDbContext<OneSystemDbContext>();
             services.AddScoped<IEntityMapper, OneSystemEntityMapper>();

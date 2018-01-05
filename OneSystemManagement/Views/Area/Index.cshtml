@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div id="tree"></div>
+@section Scripts{
+    <script>
+        var tree = $('#tree').tree({
+            primaryKey: 'id',
+            uiLibrary: 'bootstrap',
+            dataSource: '/Area/Get',
+            checkboxes: true
+        });
+        
+    </script>
+}

@@ -14,8 +14,7 @@ namespace OneSystemManagement.Controllers.Resources
         [Required]
         public string AreaName { get; set; }
         public string Description { get; set; }
-
-        [IgnoreMap]
+        
         public ICollection<FunctionResource> Functions { get; set; }
     }
 }
