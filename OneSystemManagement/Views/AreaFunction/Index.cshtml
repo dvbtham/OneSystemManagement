@@ -1,0 +1,153 @@
+﻿@using OneSystemManagement.Controllers.Resources
+@model IEnumerable<OneSystemManagement.Core.ViewModels.AreaTreeViewVm>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container">
+    <ul role="menu">
+        @foreach (var item in Model)
+        {
+            <li class="block-container col-sm-3">
+                <ul>
+                    <li>
+                        <a href="#" class="text-area">
+                            <h3>@item.Area.Name</h3>
+                        </a>
+                    </li>
+                    @if (item.Functions.Any())
+                    {
+                        foreach (var function in item.Functions)
+                        {
+                            var roles = (List<KeyValuePairResource>)ViewBag.Roles;
+                            <li class="link_container group_header">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox"> @function.Name
+                                        <label class="action-block">
+                                            <!-- Nav tabs -->
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li role="presentation" class="active"><a href="#role_@function.Id" aria-controls="role_@function.Id" role="tab" data-toggle="tab">Roles</a></li>
+                                                <li role="presentation"><a href="#update_@function.Id" aria-controls="update_@function.Id" role="tab" data-toggle="tab">Detail</a></li>
+                                            </ul>
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                <div role="tabpanel" class="tab-pane active" id="role_@function.Id">
+                                                    <div class="form-group">
+                                                        <input type="hidden" id="functionId_@function.Id" value="@function.Id" />
+                                                        <br />
+                                                        <label for="roles">Select roles:</label>
+                                                        <select class="multipleSelect" id="roles_@function.Id" multiple name="role">
+                                                            @foreach (var role in roles)
+                                                            {
+                                                                if (function.Roles.Any(x => x.Id == role.Id))
+                                                                {
+                                                                    <option selected value="@role.Id">@role.Name</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="@role.Id">@role.Name</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane" id="update_@function.Id">
+                                                    <br />
+                                                    <div class="form-group">
+                                                        <label for="codeFunc">Code Function:</label>
+                                                        <input value="@function.CodeFunction" type="text" class="form-control" id="codeFunc_@function.Id">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Function Name:</label>
+                                                        <input value="@function.Name" id="functionName_@function.Id" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Description:</label>
+                                                        <textarea name="description" id="description_@function.Id" class="form-control">@function.Description</textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Url:</label>
+                                                        <input value="@function.Url" name="url" id="url_@function.Id" type="url" class="form-control">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <button id="btnSave_@function.Id" data-area="@item.Area.Id" data-id="@function.Id" type="button" class="btn btn-primary">Save</button>
+                                            <a asp-action="Index" asp-controller="AreaFunction" class="btn btn-danger">Cancel</a>
+                                        </label>
+                                    </label>
+                                </div>
+                            </li>
+                            foreach (var f in function.ChildItems)
+                            {
+                                <li class="link_container">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox"> @f.Name
+                                            <label class="action-block">
+                                                <span class="glyphicon glyphicon-edit"></span>
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </label>
+                                        </label>
+                                    </div>
+                                </li>
+                            }
+                        }
+
+                    }
+
+                </ul>
+            </li>
+        }
+    </ul>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $('.multipleSelect').fastselect();
+
+            $("button[id^=btnSave_]").on("click",
+                function () {
+                    var id = $(this).data("id");
+                    var parent = $(this).data("parent");
+                    var area = $(this).data("area");
+                    var roles = [];
+                    $.each($("#roles_" + id + " option:selected"), function () {
+                        roles.push(parseInt($(this).val()));
+                    });
+                    
+                    var functionObj = {
+                        Id: id,
+                        IdArea: area,
+                        IdFunctionParent: parent || null,
+                        FuctionName: $("#functionName_" + id).val(),
+                        CodeFuction: $("#codeFunc_" + id).val(),
+                        Description: $("#description_" + id).val(),
+                        Url: $("#url_" + id).val(),
+                        Roles: roles
+                    };
+
+                    console.log(functionObj);
+
+                    if (id) {
+                        $.ajax({
+                            url: "/api/function/" + id,
+                            method: "put",
+                            type: "json",
+                            contentType: "application/json",
+                            data: JSON.stringify(functionObj),
+                            success: function() {
+                                alert("Data was successfully saved");
+                            },
+                            error: function (err) {
+                                alert(err.responseJSON.errorMessage);
+                            }
+                        });
+                    }
+                });
+        })
+    </script>
+}

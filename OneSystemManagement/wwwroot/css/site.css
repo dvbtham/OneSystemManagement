@@ -26,10 +26,128 @@
     margin: 15px;
 }
 
+ul {
+    list-style: none;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */
     .carousel-caption {
         display: none;
     }
+}
+
+h1 {
+    font-size: 44px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+a {
+    color: #666;
+}
+
+    a:hover {
+        color: #ff3366;
+        text-decoration: none;
+        transition: all 0.25s;
+    }
+
+    a:focus {
+        text-decoration: none;
+    }
+
+.bold {
+    font-weight: bold;
+}
+
+.block-container {
+    padding: 0 15px;
+}
+
+.action-block {
+    display: none;
+    padding-top: 8px;
+    padding-left: 0 !important;
+}
+.action-block span {
+    cursor: pointer;
+    padding-left: 8px;
+}
+
+.text-area > .action-block {
+    padding-left: 38px;
+}
+.group_header {
+    text-transform: uppercase;
+    border-bottom: 1px solid #eaeaea;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: 15px;
+    color: #ff3366;
+}
+
+.action-block {
+    text-transform: initial;
+} 
+.group_header:first-child {
+    margin-top: 0;
+}
+
+.fstControls {
+    width: 100% !important;
+}
+.fstMultipleMode .fstQueryInput, .fstResultItem, .fstChoiceItem {
+    font-size: small;
+} 
+.link_container:hover .action-block, .text-area:hover .action-block {
+    display: block;
+}
+
+.img_container {
+    padding: 0 0 5px;
+}
+
+.block-container .link_container > a {
+    line-height: 32px;
+}
+
+.block-container .group_header > a {
+    line-height: 32px;
+    border-bottom: 1px solid #ff3366;
+    display: inline-block;
+    margin-bottom: -1px;
+}
+
+#main-menu li.dropdown > a:after {
+    content: "\f107";
+    font-family: "FontAwesome";
+    font-size: 14px;
+    vertical-align: 0;
+    padding-left: 7px;
+}
+
+#main-menu li.dropdown:before {
+    content: "\f0de";
+    font-family: "FontAwesome";
+    font-size: 15px;
+    color: #fff;
+    padding-left: 7px;
+    position: absolute;
+    bottom: -13px;
+    right: 48%;
+    display: none;
+    z-index: 1001;
+}
+
+#main-menu li.dropdown:hover:before {
+    display: block;
 }
