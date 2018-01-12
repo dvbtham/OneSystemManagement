@@ -35,4 +35,9 @@
     <ProjectReference Include="..\OneSystemAdminApi.Core\OneSystemAdminApi.Core.csproj" />
   </ItemGroup>
 
+  <Target Name="BuildClientAssets" BeforeTargets="Publish">
+    <Exec Command="npm install" />
+    <Exec Command="npm run prod" />
+  </Target>
+
 </Project>

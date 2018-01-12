@@ -54,6 +54,16 @@ namespace OneSystemAdminApi.Core.DataLayer
             await _dbContext.SaveChangesAsync();
         }
 
+        public void Update(T changes)
+        {
+            if (changes == null)
+            {
+                throw new ArgumentNullException(nameof(changes));
+            }
+
+             _dbContext.SaveChanges();
+        }
+
         public async Task<T> DeleteAsync(int id)
         {
             var entity = await GetAsync(id);

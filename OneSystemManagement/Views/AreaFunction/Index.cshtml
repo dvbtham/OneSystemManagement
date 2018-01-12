@@ -102,11 +102,17 @@
             </li>
         }
     </ul>
+    
+</div>
+<div class="form-group">
+    <label>Description:</label>
+    <textarea name="description" id="description" class="form-control"></textarea>
 </div>
 
 @section Scripts{
     <script>
         $(function () {
+           
             $('.multipleSelect').fastselect();
 
             $("button[id^=btnSave_]").on("click",

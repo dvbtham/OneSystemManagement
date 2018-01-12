@@ -1,0 +1,40 @@
+﻿@model OneSystemManagement.Core.ViewModels.AreaViewModel
+
+@{
+    ViewData["Title"] = Model.Heading;
+}
+
+<h2>@Model.Heading</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="@Model.Action">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input asp-for="Id" type="hidden" class="form-control" />
+
+            <div class="form-group">
+                <label asp-for="CodeArea" class="control-label"></label>
+                <input asp-for="CodeArea" class="form-control" />
+                <span asp-validation-for="CodeArea" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AreaName" class="control-label"></label>
+                <input asp-for="AreaName" class="form-control" />
+                <span asp-validation-for="AreaName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" id="editor" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+               <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-controller="Area" asp-action="Index" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+

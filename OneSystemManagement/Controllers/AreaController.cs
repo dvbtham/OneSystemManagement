@@ -1,55 +1,86 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
+using OneSystemManagement.Core.ViewModels;
 
 namespace OneSystemManagement.Controllers
 {
     public class AreaController : Controller
     {
-        private readonly IRepository<Area> _areareRepository;
+        private readonly IRepository<Area> _areaRepository;
+        private readonly IMapper _mapper;
         private readonly IRepository<Function> _functionRepository;
 
-        public AreaController(IRepository<Area> areareRepository, IRepository<Function> functionRepository)
+        public AreaController(IRepository<Area> areareRepository, IMapper mapper,
+            IRepository<Function> functionRepository)
         {
-            _areareRepository = areareRepository;
+            _areaRepository = areareRepository;
+            _mapper = mapper;
             _functionRepository = functionRepository;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(_areaRepository.Query().ToList());
         }
 
-        public IActionResult Get()
+        public IActionResult Create()
         {
-            var areas = _areareRepository.Query().Include(x => x.Functions);
-
-            var result = areas.Select(a => new
+            var areaVm = new AreaViewModel
             {
-                id = a.Id,
-                text = a.AreaName,
-                children = _functionRepository.Query()
-                .Select(c => new
-                {
-                    id = c.Id,
-                    text = c.FuctionName,
-                    @checked = a.Functions.Any(x => x.Id == c.Id),
-                    children = _functionRepository.Query().Where(x => x.Id == c.Id).Include(x => x.Functions).Select(x => new
-                    {
-                        id = x.Id,
-                        text = x.FuctionName,
-                        @checked = x.Functions.Any(y => y.Id == x.Id),
-                        children = a.Functions.Select(v => new
-                        {
-                            id = v.Id,
-                            text = v.FuctionName
-                        })
-                    })
-                })
-            });
-            return Json(result);
+                Heading = "Add new area"
+            };
+            return View("AreaForm", areaVm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(AreaViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Heading = "Add new area";
+                return View("AreaForm", viewModel);
+            }
+
+            var area = new Area();
+
+            _mapper.Map(viewModel, area);
+
+            await _areaRepository.AddAsync(area);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var area = _areaRepository.Query().FirstOrDefault(x => x.Id == id);
+            var areaVm = new AreaViewModel
+            {
+                Heading = "Update area"
+            };
+            _mapper.Map(area, areaVm);
+            return View("AreaForm", areaVm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(AreaViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Heading = "Update area";
+                return View("AreaForm", viewModel);
+            }
+
+            var area = _areaRepository.Query().FirstOrDefault(x => x.Id == viewModel.Id);
+            _mapper.Map(viewModel, area);
+            await _areaRepository.UpdateAsync(area);
+            return RedirectToAction("Index");
         }
     }
 }

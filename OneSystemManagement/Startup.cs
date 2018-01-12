@@ -39,7 +39,6 @@ namespace OneSystemManagement
                 .AddJsonOptions(a => a.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
                 .AddJsonOptions(a => a.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-
             services.AddMvc();
             services.AddEntityFrameworkSqlServer().AddDbContext<OneSystemDbContext>();
             services.AddScoped<IEntityMapper, OneSystemEntityMapper>();

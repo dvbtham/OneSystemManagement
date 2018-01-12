@@ -17,6 +17,7 @@ namespace OneSystemAdminApi.Core.DataLayer
         Task<T> AddAsync(T entity);
 
         Task UpdateAsync(T changes);
+        void Update(T changes);
 
         Task<T> DeleteAsync(int id);
         Task<T> DeleteAsync(long id);
