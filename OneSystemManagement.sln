@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneSystemManagement", "OneSystemManagement\OneSystemManagement.csproj", "{D016E3FB-9426-48D4-BBB9-F5D318940B38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneSystemManagement", "OneSystemManagement\OneSystemManagement.csproj", "{D016E3FB-9426-48D4-BBB9-F5D318940B38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneSystemAdminApi.Core", "OneSystemAdminApi.Core\OneSystemAdminApi.Core.csproj", "{801F1291-8966-488D-8D77-DBFFC12E117A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneSystemAdminApi.Core", "OneSystemAdminApi.Core\OneSystemAdminApi.Core.csproj", "{801F1291-8966-488D-8D77-DBFFC12E117A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,8 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] &middot; One System Management</title>
-     <environment include="Development">
+    <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/fastselect/dist/fastselect.css" />
+        <link href="~/lib/elfinder/css/themes/base/all.css" rel="stylesheet" />
+        <link href="~/lib/elfinder/css/elfinder/css/elfinder.full.css" rel="stylesheet" />
+        <link href="~/lib/elfinder/css/elfinder/themes/windows-10/css/theme.css" rel="stylesheet" id="elfinder-theme" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment exclude="Development">
@@ -46,10 +50,14 @@
             <p>&copy; 2017 - One System Management</p>
         </footer>
     </div>
-   
-   <environment include="Development">
+
+    <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="//cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
+        <script src="~/lib/fastsearch/dist/fastsearch.js"></script>
+        <script src="~/lib/fastselect/dist/fastselect.js"></script>
+        <script src="~/js/app.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -64,8 +72,18 @@
                 crossorigin="anonymous"
                 integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
         </script>
-        
+
     </environment>
+
+    <script src="~/lib/elfinder/js/jquery-ui-1.12.0.js"></script>
+    <script src="~/lib/elfinder/js/elfinder/elfinder.full.js"></script>
+    <script src="~/lib/elfinder/js/elfinder/i18n/elfinder.vi.js"></script>
+
+    <script type="text/javascript">
+        function switchTheme(href) {
+            $('link#elfinder-theme').attr('href', href);
+        }
+    </script>
 
     @RenderSection("Scripts", required: false)
 </body>

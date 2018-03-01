@@ -1,5 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using OneSystemManagement.Controllers.Resources;
 using OneSystemManagement.Core.Responses.ApiResponses;
 
@@ -18,8 +25,10 @@ namespace OneSystemManagement.Controllers.Api
         /// Constructor
         /// </summary>
         /// <param name="userService"></param>
-        public UserApiController(IUserService userService)
+        private readonly IConfiguration _configuration;
+        public UserApiController(IUserService userService, IConfiguration configuration)
         {
+            _configuration = configuration;
             _userService = userService;
         }
 
@@ -101,10 +110,34 @@ namespace OneSystemManagement.Controllers.Api
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
         [Route("login")]
-        public async Task<bool> Login(string email, string password)
+        public async Task<IActionResult> Login([FromBody] TokenRequest request)
         {
-            return await _userService.Login(email, password);
+            if (await _userService.Login(request.Username, request.Password))
+            {
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.Name, request.Username)
+                };
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecurityKey"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                    issuer: "oneoffice.vn",
+                    audience: "oneoffice.vn",
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(30),
+                    signingCredentials: creds);
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token)
+                });
+            }
+
+            return BadRequest("Could not verify username and password");
         }
 
         #endregion

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OneSystemAdminApi.Core.DataLayer;
@@ -17,6 +20,18 @@ namespace OneSystemManagement
 {
     public class Startup
     {
+        public static string WebRootPath { get; private set; }
+
+        public static string MapPath(string path, string basePath = null)
+        {
+            if (string.IsNullOrEmpty(basePath))
+            {
+                basePath = WebRootPath;
+            }
+
+            path = path.Replace("~/", "").TrimStart('/').Replace('/', '\\');
+            return Path.Combine(basePath, path);
+        }
         private readonly IHostingEnvironment _hostingEnvironment;
         public Startup(IHostingEnvironment env)
         {
@@ -50,7 +65,21 @@ namespace OneSystemManagement
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddSingleton(Configuration);
-
+           
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = "oneoffice.vn",
+                        ValidAudience = "oneoffice.vn",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecurityKey"]))
+                    };
+                });
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -70,8 +99,7 @@ namespace OneSystemManagement
                 var xmlPath = Path.Combine(basePath, "OneSystemAPI.xml");
                 c.IncludeXmlComments(xmlPath);
             });
-
-
+            
             services.AddAutoMapper();
 
             return services.RegisterService(Configuration, _hostingEnvironment);
@@ -101,6 +129,8 @@ namespace OneSystemManagement
 
             app.UseStaticFiles();
 
+            app.UseAuthentication();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -112,6 +142,8 @@ namespace OneSystemManagement
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            WebRootPath = env.WebRootPath;
         }
     }
 }
