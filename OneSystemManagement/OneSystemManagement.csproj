@@ -3841,9 +3841,4 @@
     <TypeScriptCompile Include="wwwroot\theme\vendors\bower_components\moment\moment.d.ts" />
   </ItemGroup>
 
-  <Target Name="BuildClientAssets" BeforeTargets="Publish">
-    <Exec Command="npm install" />
-    <Exec Command="npm run prod" />
-  </Target>
-
 </Project>
