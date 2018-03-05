@@ -1,0 +1,72 @@
+﻿@using OneSystemManagement.Core.Extensions
+@model OneSystemManagement.Areas.SystemAdmin.Models.AreaViewModel
+@{
+    ViewData["Title"] = "Khu Vực";
+}
+
+@section PageTitle
+    {
+    <!-- Title -->
+    <div class="row heading-bg">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h5 class="txt-dark">@ViewData["Title"]</h5>
+        </div>
+        <!-- Breadcrumb -->
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <ol class="breadcrumb">
+                <li><a asp-area="SystemAdmin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+               <li><a asp-area="SystemAdmin" asp-controller="Area" asp-action="Index"><span>@ViewData["Title"]</span></a></li>
+                <li class="active"><span>@(Model.Action.ToLower() == "Update".ToLower() ? "Cập nhật" : "Thêm mới")</span></li>
+            </ol>
+        </div>
+        <!-- /Breadcrumb -->
+    </div>
+    <!-- /Title -->
+
+}
+
+<div class="col-sm-12">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading">
+            <error msg="@ViewBag.ErrorMsg"></error>
+            <div class="pull-left">
+                <h6 class="panel-title txt-dark">Thông tin khu vực</h6>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="form-wrap">
+                    <form action="/SystemAdmin/Area/@Model.Action" data-val="@Model.Action" method="post" id="form">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="Id" type="hidden" />
+                        <div class="form-group">
+                            <label class="control-label mb-10" asp-for="CodeArea"></label>
+                            <input asp-for="CodeArea" type="text" class="form-control">
+                            <span asp-validation-for="CodeArea" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="control-label mb-10" asp-for="AreaName"></label>
+                            <input asp-for="AreaName" type="text" class="form-control">
+                            <span asp-validation-for="AreaName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label mb-10" asp-for="Description"></label>
+                            <textarea asp-for="Description" rows="5" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-0">
+                            <button type="submit" name="saveCommand" value="@Constants.SaveContinute" class="btn btn-success btn-anim"><i class="fa fa-check"></i><span class="btn-text">Lưu và Tiếp tục</span></button>
+                            <button type="submit" name="saveCommand" value="@Constants.Save" class="btn btn-warning btn-anim"><i class="fa fa-sign-out"></i><span class="btn-text">Lưu và Thoát</span></button>
+                            <a asp-area="SystemAdmin" class="btn btn-danger" asp-controller="Area" asp-action="Index">Hủy</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

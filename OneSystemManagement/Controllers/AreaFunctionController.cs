@@ -78,8 +78,8 @@ namespace OneSystemManagement.Controllers
             var treeViewVm = new TreeViewVm
             {
                 Id = function.Id,
-                Name = function.FuctionName,
-                CodeFunction = function.CodeFuction,
+                Name = function.FunctionName,
+                CodeFunction = function.CodeFunction,
                 Description = function.Description,
                 Url = function.Url
             };

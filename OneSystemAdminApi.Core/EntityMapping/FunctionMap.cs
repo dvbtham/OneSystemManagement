@@ -11,13 +11,13 @@ namespace OneSystemAdminApi.Core.EntityMapping
             modelBuilder.Entity<Function>(entity =>
             {
                 entity.ToTable("Functions");
-                entity.Property(e => e.CodeFuction)
+                entity.Property(e => e.CodeFunction)
                     .IsRequired()
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Description).HasMaxLength(500);
 
-                entity.Property(e => e.FuctionName)
+                entity.Property(e => e.FunctionName)
                     .IsRequired()
                     .HasMaxLength(300);
 

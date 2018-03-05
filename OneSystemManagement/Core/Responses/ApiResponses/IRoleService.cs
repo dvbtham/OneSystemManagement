@@ -7,7 +7,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 {
     public interface IRoleService : IDisposable
     {
-        IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null);
+        IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null, bool isPaging = false);
         Task<IActionResult> GetAsync(int id);
         Task<IActionResult> Create(RoleResource resource);
         Task<IActionResult> Update(int id, RoleResource resource);

@@ -78,7 +78,7 @@ namespace OneSystemManagement.Core.Mapping
                 opt => opt.MapFrom(a => a.Functions.Select(f => new KeyValuePairResource
                 {
                     Id = f.Id,
-                    Name = f.FuctionName
+                    Name = f.FunctionName
                 })));
 
             CreateMap<Role, RoleResource>();
@@ -95,7 +95,7 @@ namespace OneSystemManagement.Core.Mapping
                     opt => opt.MapFrom(u => u.Functions.Select(f => new KeyValuePairResource
                     {
                         Id = f.Id,
-                        Name = f.FuctionName
+                        Name = f.FunctionName
                     })))
                 .ForMember(ug => ug.Roles,
                     opt => opt.MapFrom(u => u.RoleFunctions.Select(rf => new KeyValuePairResource

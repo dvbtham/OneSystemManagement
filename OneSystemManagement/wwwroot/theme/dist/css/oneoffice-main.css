@@ -1,0 +1,74 @@
+﻿.sticky-heading {
+    background: #edf1f5;
+    z-index: 99 !important;
+}
+.timeline-action { 
+    display: none; 
+    transition: 600s ease-in;
+    -webkit-transition: 600s ease-in;
+}
+
+.timeline-panel:hover > .timeline-heading > h6 > .timeline-action {
+    display: inline;
+    transition: 600s ease-out;
+    -webkit-transition: 600s ease-out;
+}
+
+.txt-border-bottom {
+    font-weight: bold;
+    margin-bottom: 35px;
+    margin-top: 0;
+    padding: 0 15px 0 0;
+    position: relative;
+}
+
+    .txt-border-bottom:after {
+        content: "";
+        height: 3px;
+        left: 0;
+        width: 40px;
+        position: absolute;
+        bottom: -13px;
+        background-color: #4dd4a8;
+    }
+
+    .txt-border-bottom:before {
+        background: rgba(0, 0, 0, 0.1);
+        content: "";
+        width: 30%;
+        height: 1px;
+        left: 50px;
+        right: 0;
+        position: absolute;
+        bottom: -12px;
+    }
+
+.image-with-action {
+    width: 130px;
+}
+   
+    .delete-x {
+        padding-left: 5px;
+        position: absolute;
+        cursor: pointer;
+        color: #ed6f56;
+        font-weight: bold;
+    }
+
+
+.fstElement {
+    display: block;
+    position: relative;
+    border: 1px solid #D7D7D7;
+    box-sizing: border-box;
+    color: #232323;
+    font-size: 11px;
+    background-color: #fff;
+}
+.fstResults {
+    font-size: 10px;
+}
+
+.fstMultipleMode .fstQueryInput {
+    font-size: 14px;
+}

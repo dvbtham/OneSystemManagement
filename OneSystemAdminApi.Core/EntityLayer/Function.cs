@@ -13,8 +13,8 @@ namespace OneSystemAdminApi.Core.EntityLayer
         public int Id { get; set; }
         public int? IdArea { get; set; }
         public int? IdFunctionParent { get; set; }
-        public string CodeFuction { get; set; }
-        public string FuctionName { get; set; }
+        public string CodeFunction { get; set; }
+        public string FunctionName { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
 

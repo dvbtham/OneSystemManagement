@@ -8,10 +8,9 @@ namespace OneSystemManagement.Controllers.Api
     // this api key for demo purpose, 
     // change it to ONEDANANG to try it works.
     [ApiValidate("ONEDANANG")]
-    [Authorize]
     public class BaseApiController : Controller
     {
-       
+
     }
     public class TokenRequest
     {

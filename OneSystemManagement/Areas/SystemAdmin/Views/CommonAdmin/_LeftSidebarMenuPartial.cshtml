@@ -1,0 +1,39 @@
+﻿<div class="fixed-sidebar-left">
+    <ul class="nav navbar-nav side-nav nicescroll-bar">
+        <li class="navigation-header">
+            <span>QUẢN TRỊ HỆ THỐNG</span>
+            <i class="zmdi zmdi-more"></i>
+        </li>
+
+        <li>
+            <a href="javascript:void(0);" data-toggle="collapse" data-target="#ui_dr">
+                <div class="pull-left"><i class="zmdi zmdi-accounts mr-20"></i><span class="right-nav-text">Hệ thống</span></div>
+                <div class="pull-right"><span class="label label-success">Admin</span></div><div class="clearfix"></div>
+            </a>
+            <ul id="ui_dr" class="collapse collapse-level-1">
+                <li>
+                    <a asp-area="SystemAdmin" asp-action="Index" asp-controller="User">Người dùng</a>
+                </li>
+                <li>
+                    <a asp-area="SystemAdmin" asp-action="Index" asp-controller="UserConfig">Cấu hình Người dùng</a>
+                </li>
+                <li>
+                    <a asp-area="SystemAdmin" asp-action="Index" asp-controller="Role">Quyền hạn</a>
+                </li>
+            </ul>
+        </li>
+
+        <li><hr class="light-grey-hr mb-10" /></li>
+        <li class="navigation-header">
+            <span>TÍNH NĂNG</span>
+            <i class="zmdi zmdi-more"></i>
+        </li>
+
+        <li>
+            <a asp-area="SystemAdmin" asp-action="Index" asp-controller="Area"><i class="zmdi zmdi-apps mr-20"></i>Khu Vực</a>
+        </li>
+        <li>
+            <a asp-area="SystemAdmin" asp-action="Index" asp-controller="Function"><i class="zmdi zmdi-archive mr-20"></i>Chức năng</a>
+        </li>
+    </ul>
+</div>

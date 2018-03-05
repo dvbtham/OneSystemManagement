@@ -10,13 +10,13 @@ namespace OneSystemManagement.Controllers.Resources
         public int? IdFunctionParent { get; set; }
 
         [Required]
-        public string CodeFuction { get; set; }
+        public string CodeFunction { get; set; }
 
         [Required]
-        public string FuctionName { get; set; }
+        public string FunctionName { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
         
-        public ICollection<int> Roles { get; set; }
+        public ICollection<int> Roles { get; set; } = new List<int>();
     }
 }

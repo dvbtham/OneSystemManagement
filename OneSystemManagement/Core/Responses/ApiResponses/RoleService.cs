@@ -13,16 +13,18 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
     public class RoleService : IRoleService
     {
         private readonly IRepository<Role> _roleRepository;
+        private readonly IRoleFunctionService _roleFunctionService;
         private readonly IUserRoleService _userRoleService;
         private readonly IMapper _mapper;
-        public RoleService(IRepository<Role> roleRepository,IUserRoleService userRoleService, IMapper mapper)
+        public RoleService(IRepository<Role> roleRepository, IRoleFunctionService roleFunctionService, IUserRoleService userRoleService, IMapper mapper)
         {
             _roleRepository = roleRepository;
+            _roleFunctionService = roleFunctionService;
             _userRoleService = userRoleService;
             _mapper = mapper;
         }
 
-        public IActionResult GetAll(int? pageSize, int? pageNumber, string q = null)
+        public IActionResult GetAll(int? pageSize, int? pageNumber, string q = null, bool isPaging = false)
         {
             var response = new ListModelResponse<RoleResource>
             {
@@ -30,8 +32,13 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 PageNumber = (int)pageNumber
             };
 
-            var query = _roleRepository.Query().Skip((response.PageNumber - 1) * response.PageSize)
-                .Take(response.PageSize).ToList();
+            var query = _roleRepository.Query().ToList();
+
+            if (isPaging)
+            {
+                query = query.Skip((response.PageNumber - 1) * response.PageSize)
+                    .Take(response.PageSize).ToList();
+            }
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
@@ -147,7 +154,10 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
             try
             {
-                var rolesToDelete = await _roleRepository.Query().Include(x => x.UserRoles).SingleOrDefaultAsync(x => x.Id == id);
+                var rolesToDelete = await _roleRepository.Query()
+                    .Include(x => x.UserRoles)
+                    .Include(x => x.RoleFunctions)
+                    .SingleOrDefaultAsync(x => x.Id == id);
 
                 if (rolesToDelete == null)
                 {
@@ -156,7 +166,11 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                     return response.ToHttpResponse();
                 }
 
-                await _userRoleService.Delete(rolesToDelete.UserRoles.ToList());
+                if (rolesToDelete.UserRoles.Any())
+                    await _userRoleService.Delete(rolesToDelete.UserRoles.ToList());
+
+                if (rolesToDelete.RoleFunctions.Any())
+                    await _roleFunctionService.Delete(rolesToDelete.RoleFunctions.ToList());
 
                 var entity = await _roleRepository.DeleteAsync(id);
                 var resource = new RoleResource();

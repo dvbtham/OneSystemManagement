@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>OneSystem Admin</title>
+    <meta name="description" content="admin oneoffice" />
+    <meta name="keywords" content="oneoffice.com.vn" />
+    <meta name="author" content="oneoffice" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="@Url.Content("~/theme/logo.ico")">
+    <link rel="icon" href="@Url.Content("~/theme/logo.ico")" type="image/x-icon">
+
+    <!-- vector map CSS -->
+    <link href="/theme//theme/vendors/bower_components/jasny-bootstrap/dist/css/jasny-bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Custom CSS -->
+    <link href="/theme/dist/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <!--Preloader-->
+    <div class="preloader-it">
+        <div class="la-anim-1"></div>
+    </div>
+    <!--/Preloader-->
+
+    <div class="wrapper pa-0">
+        <header class="sp-header">
+            <div class="sp-logo-wrap pull-left">
+                <a asp-area="admin" asp-action="Login" asp-controller="Account">
+                    <img class="brand-img mr-10" src="@Url.Content("~/theme/dist/img/logo.png")" alt="OneOffice" />
+                    <span class="brand-text">OneSystem Admin</span>
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="page-wrapper pa-0 ma-0 auth-page">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+
+        </div>
+        <!-- /Main Content -->
+
+    </div>
+    <!-- /#wrapper -->
+    <!-- JavaScript -->
+    <!-- jQuery -->
+    <script src="/theme/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+
+    <script src="@Url.Content("~/lib/jquery-validation/dist/jquery.validate.js")"></script>
+    <script src="@Url.Content("~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js")"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/theme/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/theme/vendors/bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.min.js"></script>
+
+    <!-- Slimscroll JavaScript -->
+    <script src="/theme/dist/js/jquery.slimscroll.js"></script>
+
+    <!-- Init JavaScript -->
+    <script src="/theme/dist/js/init.js"></script>
+</body>
+</html>

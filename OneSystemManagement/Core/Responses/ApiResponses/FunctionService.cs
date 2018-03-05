@@ -27,26 +27,31 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
         #region CRUD Methods
 
-        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
+        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null, bool isPaging = false)
         {
             var response = new ListModelResponse<FunctionResource>
             {
                 PageSize = (int)pageSize,
                 PageNumber = (int)pageNumber
             };
+
             var query = _functionRepository.Query()
                 .Include(f => f.RoleFunctions)
                 .ThenInclude(rf => rf.Role)
                 .Include(x => x.Functions).Include(x => x.FunctionProp)
-                .Include(x => x.Area)
-                .Skip((response.PageNumber - 1) * response.PageSize)
-                .Take(response.PageSize).ToList();
+                .Include(x => x.Area).ToList();
+
+            if (isPaging)
+            {
+                query = query.Skip((response.PageNumber - 1) * response.PageSize)
+                    .Take(response.PageSize).ToList();
+            }
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
                 q = q.ToLower();
-                query = query.Where(x => x.FuctionName.ToLower().Contains(q)
-                                         || x.CodeFuction.ToLower().Contains(q)
+                query = query.Where(x => x.FunctionName.ToLower().Contains(q)
+                                         || x.CodeFunction.ToLower().Contains(q)
                                          || x.Description.ToLower().Contains(q)
                                          || x.Area.AreaName.ToLower().Contains(q)).ToList();
             }

@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace OneSystemAdminApi.Core.DataLayer
+﻿namespace OneSystemAdminApi.Core.DataLayer
 {
     public class AppSettings
     {
-        public String ConnectionString { get; set; }
+        public string BaseUrl { get; set; }
+        public string ConnectionString { get; set; }
     }
 }

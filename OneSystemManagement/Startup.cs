@@ -1,20 +1,21 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using OneSystemAdminApi.Core.DataLayer;
 using OneSystemManagement.Core.Extensions;
 using OneSystemManagement.Core.Responses.ApiResponses;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.IO;
+using System.Text;
+using OneSystemAdminApi.Core.DataLayer;
 
 namespace OneSystemManagement
 {
@@ -33,6 +34,7 @@ namespace OneSystemManagement
             return Path.Combine(basePath, path);
         }
         private readonly IHostingEnvironment _hostingEnvironment;
+
         public Startup(IHostingEnvironment env)
         {
             _hostingEnvironment = env;
@@ -102,6 +104,19 @@ namespace OneSystemManagement
             
             services.AddAutoMapper();
 
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                /* For example, in the below code instead of having the folder name as 'Areas', it has been changed to 'admin'.
+                    / Areas /< Area - Name >/ Views /< Controller - Name >/< Action - Name >.cshtml
+                   / Areas /< Area - Name >/ Views / Shared /< Action - Name >.cshtml
+                   / Views / Shared /< Action - Name >.cshtml
+               */
+                options.AreaViewLocationFormats.Clear();
+                options.AreaViewLocationFormats.Add("/areas/{2}/Views/{1}/{0}.cshtml");
+                options.AreaViewLocationFormats.Add("/areas/{2}/Views/Shared/{0}.cshtml");
+                options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+            });
+
             return services.RegisterService(Configuration, _hostingEnvironment);
         }
 
@@ -135,7 +150,7 @@ namespace OneSystemManagement
             {
                 routes.MapRoute(
                     name: "areas",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                    template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
                 );
 
                 routes.MapRoute(
