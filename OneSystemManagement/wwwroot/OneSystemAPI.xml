@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OneSystemManagement</name>
+    </assembly>
+    <members>
+        <member name="T:OneSystemManagement.Controllers.Api.UserApiController">
+            <summary>
+            This class for management user.
+            </summary>
+        </member>
+        <member name="F:OneSystemManagement.Controllers.Api.UserApiController._configuration">
+            <summary>
+            Constructor
+            </summary>
+            <param name="userService"></param>
+        </member>
+        <member name="M:OneSystemManagement.Controllers.Api.UserApiController.Dispose(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:OneSystemManagement.Controllers.Api.UserApiController.GetAll(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
+            <summary>
+            Return user list with paging.
+            </summary>
+            <param name="pageSize"></param>
+            <param name="pageNumber"></param>
+            <param name="q"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OneSystemManagement.Controllers.Api.UserApiController.GetAsync(System.Int32)">
+            <summary>
+            Get user by id.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OneSystemManagement.Controllers.Api.UserApiController.Create(OneSystemManagement.Controllers.Resources.SaveUserResource)">
+            <summary>
+            Add new user to database.
+            </summary>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OneSystemManagement.Controllers.Api.UserApiController.Update(System.Int32,OneSystemManagement.Controllers.Resources.SaveUserResource)">
+            <summary>
+            Update existing user.
+            </summary>
+            <param name="id"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OneSystemManagement.Controllers.Api.UserApiController.Delete(System.Int32)">
+            <summary>
+            Delete existing user by id.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OneSystemManagement.Controllers.Api.UserApiController.Login(OneSystemManagement.Controllers.Api.TokenRequest)">
+            <summary>
+            Login by email and password.
+            </summary>
+            <param name="email"></param>
+            <param name="password"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OneSystemManagement.Controllers.Resources.SaveUserResource">
+            <summary>
+            Use this class for create and update user.
+            </summary>
+        </member>
+        <member name="T:OneSystemManagement.Controllers.Resources.UserGridResource">
+            <summary>
+            Return user object without password.
+            </summary>
+        </member>
+        <member name="T:OneSystemManagement.Controllers.Resources.UserInfoResource">
+            <summary>
+            User information.
+            </summary>
+        </member>
+        <member name="T:OneSystemManagement.Core.CustomAttribute.ApiValidateAttribute">
+            <summary>
+            Validate api for each user.
+            </summary>
+        </member>
+        <member name="M:OneSystemManagement.Core.CustomAttribute.ApiValidateAttribute.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="apiKey"></param>
+        </member>
+        <member name="M:OneSystemManagement.Core.CustomAttribute.ApiValidateAttribute.OnResultExecuting(Microsoft.AspNetCore.Mvc.Filters.ResultExecutingContext)">
+            <summary>
+            Check user api.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="T:OneSystemManagement.Core.Extensions.PasswordManager">
+            <summary>
+            Password security manager.
+            </summary>
+        </member>
+        <member name="M:OneSystemManagement.Core.Extensions.PasswordManager.GetMd5Hash(System.Security.Cryptography.MD5,System.String)">
+            <summary>
+            Get hashed password by input string.
+            </summary>
+            <param name="md5Hash"></param>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OneSystemManagement.Core.Extensions.PasswordManager.VerifyMd5Hash(System.Security.Cryptography.MD5,System.String,System.String)">
+            <summary>
+             Verify a hash against a string.
+            </summary>
+            <param name="md5Hash"></param>
+            <param name="input"></param>
+            <param name="hash"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
