@@ -22,7 +22,9 @@ namespace OneSystemManagement.Core
                 .ForMember(x => x.Functions, opt => opt.MapFrom(x => x.Functions.Select(f => new KeyValuePairResource { Id = x.FunctionProp.Id, Name = x.FunctionProp.FunctionName })));
             CreateMap<FunctionViewModel, Function>().ForMember(x => x.Id, opt => opt.Ignore());
             CreateMap<FunctionViewModel, FunctionViewModel>();
-            
+
+            CreateMap<SaveUserViewModel, SaveUserViewModel>();
+
         }
     }
 }

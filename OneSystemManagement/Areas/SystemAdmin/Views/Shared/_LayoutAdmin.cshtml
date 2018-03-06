@@ -20,22 +20,20 @@
     <!-- bootstrap-tagsinput CSS -->
     <!-- select2 CSS -->
 
-    <link href="~/theme/vendors/bower_components/select2/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/theme/vendors/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
-    <link href="~/theme/vendors/bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/theme/vendors/bower_components/jquery-toast-plugin/dist/jquery.toast.min.css" rel="stylesheet" type="text/css">
+    <link href="@Url.Content("~/theme/vendors/bower_components/select2/dist/css/select2.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/theme/vendors/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/theme/vendors/bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/theme/vendors/bower_components/jquery-toast-plugin/dist/jquery.toast.min.css")" rel="stylesheet" type="text/css">
     <!-- Bootstrap Datetimepicker CSS -->
-    <link href="~/theme/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/theme/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css")" rel="stylesheet" type="text/css" />
     <!-- Bootstrap Daterangepicker CSS -->
-    <link href="~/theme/vendors/bower_components/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/theme/vendors/bower_components/bootstrap-daterangepicker/daterangepicker.css")" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <!-- Ion.RangeSlider -->
-    <link href="~/theme/vendors/bower_components/ion.rangeSlider/css/ion.rangeSlider.css" rel="stylesheet" type="text/css">
-    <link href="~/theme/vendors/bower_components/ion.rangeSlider/css/ion.rangeSlider.skinModern.css" rel="stylesheet" type="text/css">
-
-    <link href="~/theme/vendors/bower_components/morris.js/morris.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="~/lib/fastselect/dist/fastselect.css" />
+    <link href="@Url.Content("~/theme/vendors/bower_components/ion.rangeSlider/css/ion.rangeSlider.css")" rel="stylesheet" type="text/css">
+    <link href="@Url.Content("~/theme/vendors/bower_components/morris.js/morris.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="@Url.Content("~/lib/fastselect/dist/fastselect.css")" />
     <!-- Custom CSS -->
     <link href="@Url.Content("~/theme/dist/css/style.css")" rel="stylesheet" type="text/css">
     <link href="@Url.Content("~/theme/dist/css/oneoffice-main.css")" rel="stylesheet" />
@@ -84,10 +82,10 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="@Url.Content("~/theme/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
-    <script src="~/theme/vendors/bower_components/jquery-toast-plugin/dist/jquery.toast.min.js"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/jquery-toast-plugin/dist/jquery.toast.min.js")"></script>
 
     <!-- Sticky -->
-    <script src="~/js/jquery.sticky.js"></script>
+    <script src="@Url.Content("~/js/jquery.sticky.js")"></script>
 
     <!-- CkEditor -->
     <script src="https://cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
@@ -96,14 +94,13 @@
     <script src="@Url.Content("~/theme/vendors/bower_components/datatables/media/js/jquery.dataTables.min.js")"></script>
     <script src="@Url.Content("~/js/dataTable-base.js")"></script>
 
-    <script src="~/theme/vendors/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="~/theme/vendors/bower_components/datatables.net-buttons/js/buttons.flash.min.js"></script>
-    <script src="~/theme/vendors/bower_components/jszip/dist/jszip.min.js"></script>
-    <script src="~/theme/vendors/bower_components/pdfmake/build/pdfmake.min.js"></script>
-    <script src="~/theme/vendors/bower_components/pdfmake/build/vfs_fonts.js"></script>
-
-    <script src="~/theme/vendors/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="~/theme/vendors/bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/datatables.net-buttons/js/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/datatables.net-buttons/js/buttons.flash.min.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/jszip/dist/jszip.min.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/pdfmake/build/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/pdfmake/build/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/datatables.net-buttons/js/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/datatables.net-buttons/js/buttons.print.min.js")"></script>
 
     <!-- Slimscroll JavaScript -->
     <script src="@Url.Content("~/theme/dist/js/jquery.slimscroll.js")"></script>
@@ -111,21 +108,21 @@
     <!-- Owl JavaScript -->
     <script src="@Url.Content("~/theme/vendors/bower_components/owl.carousel/dist/owl.carousel.min.js")"></script>
     <!-- Moment JavaScript -->
-    <script type="text/javascript" src="~/theme/vendors/bower_components/moment/min/moment-with-locales.min.js"></script>
-    <script src="~/theme/vendors/bower_components/moment/locale/vi.js"></script>
-    <script type="text/javascript" src="~/theme/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="@Url.Content("~/theme/vendors/bower_components/moment/min/moment-with-locales.min.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/moment/locale/vi.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/theme/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js")"></script>
     <!-- Bootstrap Daterangepicker JavaScript -->
-    <script src="~/theme/vendors/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/bootstrap-daterangepicker/daterangepicker.js")"></script>
     <script src="@Url.Content("~/lib/sweetalert/dist/sweetalert.min.js")"></script>
 
     <!-- Select2 JavaScript -->
-    <script src="~/theme/vendors/bower_components/select2/dist/js/select2.full.min.js"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/select2/dist/js/select2.full.min.js")"></script>
 
     <!-- Bootstrap Tagsinput JavaScript -->
-    <script src="~/theme/vendors/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js")"></script>
 
     <!-- Bootstrap Touchspin JavaScript -->
-    <script src="~/theme/vendors/bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js")"></script>
 
     <!-- Switchery JavaScript -->
     <script src="@Url.Content("~/theme/vendors/bower_components/switchery/dist/switchery.min.js")"></script>
@@ -133,12 +130,12 @@
     <!-- Fancy Dropdown JS -->
     <script src="@Url.Content("~/theme/dist/js/dropdown-bootstrap-extended.js")"></script>
 
-    <script src="~/lib/fastsearch/dist/fastsearch.js"></script>
-    <script src="~/lib/fastselect/dist/fastselect.js"></script>
+    <script src="@Url.Content("~/lib/fastsearch/dist/fastsearch.js")"></script>
+    <script src="@Url.Content("~/lib/fastselect/dist/fastselect.js")"></script>
 
     <!-- Ion.RangeSlider -->
-    <script src="~/theme/vendors/bower_components/moment/min/moment.min.js"></script>
-    <script src="~/theme/vendors/bower_components/ion.rangeSlider/js/ion.rangeSlider.min.js"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/moment/min/moment.min.js")"></script>
+    <script src="@Url.Content("~/theme/vendors/bower_components/ion.rangeSlider/js/ion.rangeSlider.min.js")"></script>
 
     <!-- Init JavaScript -->
     <script src="@Url.Content("~/theme/dist/js/init.js")"></script>

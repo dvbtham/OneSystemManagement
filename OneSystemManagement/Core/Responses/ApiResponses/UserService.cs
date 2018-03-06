@@ -26,7 +26,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         #region CRUD Methods
 
         [HttpGet]
-        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null)
+        public IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null, bool isPaging = false)
         {
             var response = new ListModelResponse<UserGridResource>
             {
@@ -35,8 +35,13 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             };
             var query = _userRepository.Query().Where(x => x.IsActive)
                 .Include(x => x.UserRoles).ThenInclude(ur => ur.Role)
-                .Skip((response.PageNumber - 1) * response.PageSize)
-                .Take(response.PageSize).ToList();
+                .ToList();
+
+            if (isPaging)
+            {
+                query = query.Skip((response.PageNumber - 1) * response.PageSize)
+                             .Take(response.PageSize).ToList();
+            }
 
             if (!string.IsNullOrEmpty(q) && query.Any())
             {
@@ -106,7 +111,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 var user = new User();
                 _mapper.Map(resource, user);
 
-                if (Queryable.Any<User>(_userRepository.Query(), x => x.Email == resource.UserInfo.Email))
+                if (_userRepository.Query().Any(x => x.Email == resource.UserInfo.Email))
                 {
                     response.DidError = true;
                     response.ErrorMessage = "This email is already register.";

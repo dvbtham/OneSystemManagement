@@ -1,7 +1,261 @@
-﻿
+﻿@using OneSystemManagement.Core.Extensions
+@model OneSystemManagement.Areas.SystemAdmin.Models.SaveUserViewModel
 @{
-    ViewData["Title"] = "UserForm";
+    ViewData["Title"] = "Người dùng";
 }
 
-<h2>UserForm</h2>
+@section PageTitle
+    {
+    <!-- Title -->
+    <div class="row heading-bg">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h5 class="txt-dark">@ViewData["Title"]</h5>
+        </div>
+        <!-- Breadcrumb -->
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <ol class="breadcrumb">
+                <li><a asp-area="SystemAdmin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+                <li><a asp-area="SystemAdmin" asp-controller="User" asp-action="Index"><span>@ViewData["Title"]</span></a></li>
+                <li class="active"><span>@(Model.Action.ToLower() == "Update".ToLower() ? "Cập nhật" : "Thêm mới")</span></li>
+            </ol>
+        </div>
+        <!-- /Breadcrumb -->
+    </div>
+    <!-- /Title -->
 
+}
+
+<div class="col-sm-12">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading">
+            <error msg="@ViewBag.ErrorMsg"></error>
+            <div class="pull-left">
+                <h6 class="panel-title txt-dark">Thông tin người dùng</h6>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="form-wrap">
+                    <form action="/SystemAdmin/User/@Model.Action" data-val="@Model.Action" method="post" id="form">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        <input asp-for="Id" type="hidden" />
+                        <div class="tab-struct custom-tab-1 mt-40">
+                            <ul role="tablist" class="nav nav-tabs" id="myTabs_7">
+                                <li class="active" role="presentation"><a aria-expanded="true" data-toggle="tab" role="tab" id="basic_tab" href="#basic">Thông tin cơ bản</a></li>
+                                <li role="presentation" class=""><a data-toggle="tab" id="content_tab" role="tab" href="#content" aria-expanded="false">Tài khoản</a></li>
+                                <li role="presentation" class=""><a data-toggle="tab" id="content_tab" role="tab" href="#more" aria-expanded="false">Câu hỏi</a></li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent_7" style="padding-top: 20px;">
+                                <div id="basic" class="tab-pane fade active in" role="tabpanel">
+                                    <div class="container">
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="UserCode"></label>
+                                            <input asp-for="UserCode" type="text" class="form-control">
+                                            <span asp-validation-for="UserCode" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="FullName"></label>
+                                            <input asp-for="FullName" type="text" class="form-control">
+                                            <span asp-validation-for="FullName" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="UserIdentifier"></label>
+                                            <input asp-for="UserIdentifier" type="text" class="form-control">
+                                            <span asp-validation-for="UserIdentifier" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="Avatar"></label>
+                                            <input asp-for="Avatar" type="text" class="form-control">
+                                            <span asp-validation-for="Avatar" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="Phone"></label>
+                                            <input asp-for="Phone" type="tel" class="form-control">
+                                            <span asp-validation-for="Phone" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="Address"></label>
+                                            <input asp-for="Address" type="text" class="form-control">
+                                            <span asp-validation-for="Address" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label asp-for="RoleIds" class="control-label mb-10"></label>
+                                            <select class="multipleSelect form-control" multiple name="RoleIds">
+                                                @foreach (var role in Model.AllRole)
+                                                {
+                                                    if (Model.Roles.Any(x => x.Id == role.Id))
+                                                    {
+                                                        <option selected value="@role.Id">@role.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@role.Id">@role.Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <span asp-validation-for="RoleIds" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label asp-for="CreateDate" class="control-label mb-10"></label>
+                                            <div class="input-group date" id="CreateDate">
+
+                                                <input type="text" asp-for="CreateDate" class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="fa fa-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label asp-for="LastLogin" class="control-label mb-10"></label>
+                                            <div class="input-group date" id="LastLogin">
+
+                                                <input type="text" asp-for="LastLogin" class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="fa fa-calendar"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsActive" asp-for="IsActive" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsActive"></label>
+                                            </div>
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsConfirm" asp-for="IsConfirm" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsConfirm"></label>
+                                            </div>
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsMember" asp-for="IsMember" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsMember"></label>
+                                            </div>
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsPartner" asp-for="IsPartner" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsPartner"></label>
+                                            </div>
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsAdmin" asp-for="IsAdmin" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsAdmin"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="content" class="tab-pane fade" role="tabpanel">
+                                    <div class="container">
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="Email"></label>
+                                            <input asp-for="Email" type="email" class="form-control">
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+
+                                        @if (Model.Action.ToLower() == "create")
+                                        {
+                                            <div class="form-group">
+                                                <label class="control-label mb-10" asp-for="Password"></label>
+                                                <input asp-for="Password" type="password" class="form-control">
+                                                <span asp-validation-for="Password" class="text-danger"></span>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label mb-10" asp-for="ConfirmPassword"></label>
+                                                <input asp-for="ConfirmPassword" type="password" class="form-control">
+                                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                            </div>
+                                        }
+
+                                        <div class="form-group">
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsAccFacebook" asp-for="IsAccFacebook" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsAccFacebook"></label>
+                                            </div>
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsAccTwitter" asp-for="IsAccTwitter" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsAccTwitter"></label>
+                                            </div>
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsAccGoogle" asp-for="IsAccGoogle" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsAccGoogle"></label>
+                                            </div>
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                <input id="IsAccOutlook" asp-for="IsAccOutlook" type="checkbox">
+                                                <label class="checkbox-inline" asp-for="IsAccOutlook"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="more" class="tab-pane fade" role="tabpanel">
+                                    <div class="container">
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="QuestionCode"></label>
+                                            <input asp-for="QuestionCode" type="text" class="form-control">
+                                            <span asp-validation-for="QuestionCode" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" asp-for="QuestionAnswer"></label>
+                                            <textarea asp-for="QuestionAnswer" rows="5" class="form-control"></textarea>
+                                            <span asp-validation-for="QuestionAnswer" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <button type="submit" name="saveCommand" value="@Constants.SaveContinute" class="btn btn-success btn-anim"><i class="fa fa-check"></i><span class="btn-text">Lưu và Tiếp tục</span></button>
+                            <button type="submit" name="saveCommand" value="@Constants.Save" class="btn btn-warning btn-anim"><i class="fa fa-sign-out"></i><span class="btn-text">Lưu và Thoát</span></button>
+                            <a asp-area="SystemAdmin" class="btn btn-danger" asp-controller="User" asp-action="Index">Hủy</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $('.multipleSelect').fastselect();
+            $("#CreateDate").datetimepicker({
+                format: "DD/MM/YYYY",
+                useCurrent: false,
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
+            }).on("dp.show", function () {
+                if ($(this).data("DateTimePicker").date() === null)
+                    $(this).data("DateTimePicker").date(moment());
+            });
+            $("#LastLogin").datetimepicker({
+                format: "DD/MM/YYYY",
+                useCurrent: false,
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
+            }).on("dp.show", function () {
+                if ($(this).data("DateTimePicker").date() === null)
+                    $(this).data("DateTimePicker").date(moment());
+            });
+        })
+    </script>
+}

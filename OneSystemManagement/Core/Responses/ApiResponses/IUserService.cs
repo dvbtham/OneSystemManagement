@@ -8,7 +8,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 {
     public interface IUserService : IDisposable
     {
-        IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null);
+        IActionResult GetAll(int? pageSize = 10, int? pageNumber = 1, string q = null, bool isPaging = false);
         Task<IActionResult> GetAsync(int id);
         Task<IActionResult> Create(SaveUserResource resource);
         Task<IActionResult> Update(int id, SaveUserResource resource);

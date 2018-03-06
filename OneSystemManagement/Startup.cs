@@ -97,7 +97,7 @@ namespace OneSystemManagement
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
-                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var basePath = _hostingEnvironment.WebRootPath;
                 var xmlPath = Path.Combine(basePath, "OneSystemAPI.xml");
                 c.IncludeXmlComments(xmlPath);
             });

@@ -20,6 +20,7 @@ namespace OneSystemManagement
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                //.UseEnvironment("Production")
                 .UseSetting("detailedErrors", "true")
                 .UseIISIntegration()
                 .CaptureStartupErrors(true)
