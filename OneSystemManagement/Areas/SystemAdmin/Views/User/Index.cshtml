@@ -46,6 +46,7 @@
                                     <tr>
                                         <th>Họ tên</th>
                                         <th>Email</th>
+                                        <th>Quyền hạn</th>
                                         <th>Ngày đăng nhập gần đây</th>
                                         <th>Thao tác</th>
                                     </tr>
@@ -54,9 +55,18 @@
                                     @foreach (var item in Model.Model)
                                     {
                                         var date = "";
+
                                         <tr>
                                             <td>@item.FullName</td>
+
                                             <td><a href="mailto:@item.Email">@item.Email</a></td>
+                                            <td>
+                                                @foreach (var role in item.Roles)
+                                                {
+                                                    <span class="label label-primary">@role.Name</span> 
+                                                }
+                                                
+                                            </td>
                                             <td>
                                                 @if (item.LastLogin.HasValue)
                                                 {

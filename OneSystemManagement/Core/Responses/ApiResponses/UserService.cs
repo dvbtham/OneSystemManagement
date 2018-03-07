@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
 using OneSystemManagement.Core.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace OneSystemManagement.Core.Responses.ApiResponses
 {
@@ -154,9 +154,11 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
                 _mapper.Map(resource, entity);
 
-                await _userRepository.UpdateAsync(entity);
+               await _userRepository.UpdateAsync(entity);
 
-                response.Model = _mapper.Map<User, UserGridResource>(entity);
+                var entityMap = await GetUserWithRelated(entity.Id);
+
+                response.Model = _mapper.Map<User, UserGridResource>(entityMap);
                 response.Message = "The data was saved successfully";
             }
             catch (Exception ex)
@@ -206,7 +208,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             {
                 var entityTrue = await _userRepository.Query().Where(x => x.IsActive)
                     .Include(x => x.UserRoles)
-                    .ThenInclude(ur => ur.Role)
+                        .ThenInclude(ur => ur.Role)
                     .Include(x => x.UserConfigs)
                     .SingleOrDefaultAsync(x => x.Id == id);
 

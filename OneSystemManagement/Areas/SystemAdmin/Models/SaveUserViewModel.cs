@@ -84,10 +84,10 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
         public string QuestionAnswer { get; set; }
 
         [Display(Name = "Đăng nhập gần đây")]
-        public DateTime LastLogin { get; set; }
+        public DateTime LastLogin { get; set; } = DateTime.Now;
 
         [Display(Name = "Ngày tạo")]
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
 
         public ICollection<KeyValuePairResource> AllRole { get; set; } = new List<KeyValuePairResource>();
 

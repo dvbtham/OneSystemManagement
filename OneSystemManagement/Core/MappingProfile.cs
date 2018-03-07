@@ -25,6 +25,8 @@ namespace OneSystemManagement.Core
 
             CreateMap<SaveUserViewModel, SaveUserViewModel>();
 
+            CreateMap<UserConfigViewModel, UserConfigViewModel>();
+
         }
     }
 }

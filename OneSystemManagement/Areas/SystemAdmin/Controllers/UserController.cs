@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using OneSystemAdminApi.Core.DataLayer;
-using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Areas.SystemAdmin.Models;
 using OneSystemManagement.Controllers.Resources;
 using OneSystemManagement.Core.Extensions;
