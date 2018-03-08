@@ -7,9 +7,6 @@
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/lib/fastselect/dist/fastselect.css" />
-        <link href="~/lib/elfinder/css/themes/base/all.css" rel="stylesheet" />
-        <link href="~/lib/elfinder/css/elfinder/css/elfinder.full.css" rel="stylesheet" />
-        <link href="~/lib/elfinder/css/elfinder/themes/windows-10/css/theme.css" rel="stylesheet" id="elfinder-theme" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment exclude="Development">
@@ -17,7 +14,7 @@
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-        <link href="@Url.Content("~/theme/vendors/bower_components/datatables/media/css/jquery.dataTables.min.css")" asp-append-version="true" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/wwwroot/theme/vendors/bower_components/datatables/media/css/jquery.dataTables.min.css")" asp-append-version="true" rel="stylesheet" type="text/css" />
     </environment>
 </head>
 <body>
