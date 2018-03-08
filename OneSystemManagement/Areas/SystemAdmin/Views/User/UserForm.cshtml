@@ -71,7 +71,24 @@
 
                                         <div class="form-group">
                                             <label class="control-label mb-10" asp-for="Avatar"></label>
-                                            <input asp-for="Avatar" type="text" class="form-control">
+                                            <div class="input-group bootstrap-touchspin">
+                                                <span class="input-group-addon" style="display: none;"></span>
+                                                <input asp-for="Avatar" type="text" class="form-control" id="Avatar" data-bts-button-down-class="btn btn-default" data-bts-button-up-class="btn btn-default" style="display: block;">
+                                                <span class="input-group-addon" style="display: none;"></span>
+                                                <span class="input-group-btn">
+                                                    <button value="Avatar" class="btn btn-primary bootstrap-touchspin-up toggle-image" id="toggle-image" type="button">
+                                                        <i class="fa fa-folder-open"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+
+                                            <div style="margin-top: 10px;" id="image-show">
+                                                <div class="image-with-action">
+                                                    <img class="img-rounded" id="ImgAvatar" src="@Model.Avatar" width="100" />
+                                                    <span class="delete-x">x</span>
+                                                </div>
+                                            </div>
+
                                             <span asp-validation-for="Avatar" class="text-danger"></span>
                                         </div>
 
@@ -255,7 +272,21 @@
             }).on("dp.show", function () {
                 if ($(this).data("DateTimePicker").date() === null)
                     $(this).data("DateTimePicker").date(moment());
-            });
+                });
+
+            var form = $("#form");
+            if (form.data("val") !== "Update")
+                $("#image-show").addClass("hide");
+            else
+                $("#image-show").removeClass("hide");
+
+            $(".delete-x").on("click",
+                function () {
+                    $(this).closest("div").fadeOut(function () {
+                        $("#image-show").addClass("hide");
+                        $("#Avatar").val("");
+                    });
+                });
         })
     </script>
 }

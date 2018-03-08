@@ -243,15 +243,19 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             if (isAdminLogin)
             {
                 if (user.IsAdmin)
-                    return (int)LoginStatus.Success;
+                {
+                    var md5Hash = MD5.Create();
+                    if (PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password) == true)
+                        return (int)LoginStatus.Success;
+                    return (int)LoginStatus.IncorrectEmailAndPass;
+                }
+                    
 
                 return (int)LoginStatus.NotAdmin;
             }
 
-            var md5Hash = MD5.Create();
-            if (!PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password)) return (int)LoginStatus.IncorrectEmailAndPass;
+             return (int)LoginStatus.IncorrectEmailAndPass;
 
-            return (int)LoginStatus.Success;
         }
         
         [HttpDelete("email/{email}")]

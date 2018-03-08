@@ -1,0 +1,17 @@
+﻿@model OneSystemManagement.Core.ViewModels.FileViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "Files";
+}
+<link rel="stylesheet" href="~/css/themes/base/all.css" />
+<link rel="stylesheet" href="~/css/elfinder/css/elfinder.full.css" />
+<link rel="stylesheet" href="~/css/elfinder/themes/windows-10/css/theme.css" id="elfinder-theme" />
+
+<div id="elfinder" data-input="" data-folder="@Model.Folder" data-subfolder="@Model.SubFolder">
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/jquery-ui-1.12.0.min.js"></script>
+<script src="~/js/elfinder/elfinder.full.js"></script>
+<script src="~/js/elfinder/i18n/elfinder.vi.js"></script>
+<script type="text/javascript" src="~/js/elfinder.config.js"></script>
