@@ -15,6 +15,8 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using OneSystemAdminApi.Core.DataLayer;
 
 namespace OneSystemManagement
@@ -82,6 +84,16 @@ namespace OneSystemManagement
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecurityKey"]))
                     };
                 });
+
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
+                    options =>
+                    {
+                        options.LoginPath = new PathString("/SystemAdmin/login");
+                        options.AccessDeniedPath = new PathString("/SystemAdmin/login");
+                        options.ReturnUrlParameter = "returnUrl";
+                    });
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -152,6 +164,9 @@ namespace OneSystemManagement
                     name: "areas",
                     template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
                 );
+
+                routes.MapRoute("login", "systemadmin/login",
+                    defaults: new { controller = "Account", action = "Login", area = "SystemAdmin" });
 
                 routes.MapRoute(
                     name: "default",

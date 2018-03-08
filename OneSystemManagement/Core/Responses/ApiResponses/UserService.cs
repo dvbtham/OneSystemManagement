@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using OneSystemManagement.Areas.SystemAdmin.Models;
 
 namespace OneSystemManagement.Core.Responses.ApiResponses
 {
@@ -154,7 +155,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
                 _mapper.Map(resource, entity);
 
-               await _userRepository.UpdateAsync(entity);
+                await _userRepository.UpdateAsync(entity);
 
                 var entityMap = await GetUserWithRelated(entity.Id);
 
@@ -220,17 +221,150 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             return entityFalse;
 
         }
+        /// <summary>
+        /// 10: Success
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="isAdminLogin"></param>
+        /// <returns></returns>
+        public async Task<int> Login(string email, string password, bool isAdminLogin = false)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return (int)LoginStatus.IncorrectEmailAndPass;
 
-        public async Task<bool> Login(string email, string password)
+            var user = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
+
+            if (user == null) return (int)LoginStatus.IncorrectEmailAndPass;
+
+            if (!user.IsActive) return (int)LoginStatus.NotActived;
+
+            if (!user.IsConfirm) return (int)LoginStatus.NotConfirmed;
+
+            if (isAdminLogin)
+            {
+                if (user.IsAdmin)
+                    return (int)LoginStatus.Success;
+
+                return (int)LoginStatus.NotAdmin;
+            }
+
+            var md5Hash = MD5.Create();
+            if (!PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password)) return (int)LoginStatus.IncorrectEmailAndPass;
+
+            return (int)LoginStatus.Success;
+        }
+        
+        [HttpDelete("email/{email}")]
+        public async Task<IActionResult> GetByEmail(string email)
+        {
+            var response = new SingleModelResponse<UserResultResource>();
+
+            try
+            {
+                var entity = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
+
+                if (entity == null)
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
+                    return response.ToHttpResponse();
+                }
+                var resource = new UserResultResource();
+                _mapper.Map(entity, resource);
+                response.Model = resource;
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.Message;
+            }
+
+            return response.ToHttpResponse();
+        }
+
+        public async Task<bool> UserVerifyAsync(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return false;
+
             var user = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
+
             if (user == null) return false;
 
             var md5Hash = MD5.Create();
-            if (!PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password)) return false;
 
-            return true;
+            return PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password);
+        }
+
+        public async Task<IActionResult> ChangePassword(int id, ChangePasswordViewModel changePassword)
+        {
+            var response = new SingleModelResponse<UserResultResource>();
+
+            try
+            {
+                var entity = await _userRepository.Query().FirstOrDefaultAsync(x => x.Id == id && x.IsActive == true);
+
+                if (entity == null)
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
+                    return response.ToHttpResponse();
+                }
+                var md5Hash = MD5.Create();
+                if (!PasswordManager.VerifyMd5Hash(md5Hash, changePassword.OldPassword, entity.Password))
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Mật khẩu cũ không đúng";
+                    return response.ToHttpResponse();
+                }
+
+                entity.Password = PasswordManager.GetMd5Hash(md5Hash, changePassword.NewPassword);
+
+                await _userRepository.UpdateAsync(entity);
+
+                var model = new UserResultResource();
+                response.Model = _mapper.Map(entity, model);
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.Message;
+                response.Model = null;
+            }
+
+            return response.ToHttpResponse();
+        }
+
+        public async Task<IActionResult> ResetPassword(int id, string newPassword)
+        {
+            var response = new SingleModelResponse<UserResultResource>();
+
+            try
+            {
+                var entity = await _userRepository.Query().FirstOrDefaultAsync(x => x.Id == id && x.IsActive == true);
+
+                if (entity == null)
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
+                    return response.ToHttpResponse();
+                }
+                var md5Hash = MD5.Create();
+
+                entity.Password = PasswordManager.GetMd5Hash(md5Hash, newPassword);
+
+                await _userRepository.UpdateAsync(entity);
+
+                var model = new UserResultResource();
+                response.Model = _mapper.Map(entity, model);
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.Message;
+                response.Model = null;
+            }
+
+            return response.ToHttpResponse();
         }
 
         #endregion

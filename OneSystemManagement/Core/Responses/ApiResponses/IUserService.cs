@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OneSystemAdminApi.Core.EntityLayer;
+using OneSystemManagement.Areas.SystemAdmin.Models;
 using OneSystemManagement.Controllers.Resources;
 
 namespace OneSystemManagement.Core.Responses.ApiResponses
@@ -14,6 +15,11 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         Task<IActionResult> Update(int id, SaveUserResource resource);
         Task<IActionResult> Delete(int id);
         Task<User> GetUserWithRelated(int id, bool include = true);
-        Task<bool> Login(string email, string password);
+        Task<int> Login(string email, string password, bool isAdminLogin = false);
+        Task<IActionResult> GetByEmail(string email);
+
+        Task<bool> UserVerifyAsync(string email, string password);
+        Task<IActionResult> ChangePassword(int id, ChangePasswordViewModel changePassword);
+        Task<IActionResult> ResetPassword(int id, string newPassword);
     }
 }

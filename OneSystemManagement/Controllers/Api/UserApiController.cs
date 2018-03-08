@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using OneSystemManagement.Areas.SystemAdmin.Models;
+using OneSystemManagement.Controllers.Resources;
+using OneSystemManagement.Core.Responses.ApiResponses;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using OneSystemManagement.Controllers.Resources;
-using OneSystemManagement.Core.Responses.ApiResponses;
+using OneSystemManagement.Core.Responses;
 
 namespace OneSystemManagement.Controllers.Api
 {
@@ -112,32 +114,129 @@ namespace OneSystemManagement.Controllers.Api
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] TokenRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginViewModel request)
         {
-            if (await _userService.Login(request.Username, request.Password))
+            var loginCode = await _userService.Login(request.Email, request.Password, isAdminLogin: false);
+
+            switch (loginCode)
             {
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.Name, request.Username)
-                };
+                case (int)LoginStatus.Success:
+                    var claims = new[]
+                    {
+                        new Claim(ClaimTypes.Name, request.Email)
+                    };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecurityKey"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecurityKey"]));
+                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var token = new JwtSecurityToken(
-                    issuer: "oneoffice.vn",
-                    audience: "oneoffice.vn",
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: creds);
+                    var token = new JwtSecurityToken(
+                        issuer: "oneoffice.vn",
+                        audience: "oneoffice.vn",
+                        claims: claims,
+                        expires: DateTime.Now.AddMinutes(30),
+                        signingCredentials: creds);
 
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(token)
-                });
+                    return Ok(new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token)
+                    });
+                    
+                case (int)LoginStatus.NotActived:
+                    return BadRequest("Tài khoản của bạn chưa được kích hoạt");
+
+                case (int)LoginStatus.NotConfirmed:
+                    return BadRequest("Tài khoản của bạn chưa được kiểm duyệt");
             }
 
-            return BadRequest("Could not verify username and password");
+            return BadRequest("Không tìm thất kết quả phù hợp");
+        }
+
+        /// <summary>
+        /// Login by email and password.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("adminlogin")]
+        public async Task<IActionResult> LoginAdmin([FromBody] LoginViewModel request, bool isAdminLogin = true)
+        {
+            var loginCode = await _userService.Login(request.Email, request.Password, isAdminLogin: isAdminLogin);
+            var response = new SingleModelResponse<ResponseResult>();
+            switch (loginCode)
+            {
+                case (int)LoginStatus.Success:
+                    var claims = new[]
+                    {
+                        new Claim(ClaimTypes.Name, request.Email)
+                    };
+
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecurityKey"]));
+                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                    var token = new JwtSecurityToken(
+                        issuer: "oneoffice.vn",
+                        audience: "oneoffice.vn",
+                        claims: claims,
+                        expires: DateTime.Now.AddMinutes(30),
+                        signingCredentials: creds);
+
+                    return Ok(new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token)
+                    });
+
+                case (int)LoginStatus.NotAdmin:
+                    var notAdminResponse = new ResponseResult();
+                    notAdminResponse.Message = "Bạn không có quyền truy cập.";
+                    response.Message = notAdminResponse.Message;
+                    return response.ToHttpResponse();
+
+                case (int)LoginStatus.NotActived:
+                    var notActivedResponse = new ResponseResult();
+                    notActivedResponse.Message = "Tài khoản của bạn chưa được kích hoạt.";
+                    response.Message = notActivedResponse.Message;
+                    return response.ToHttpResponse();
+
+                case (int)LoginStatus.NotConfirmed:
+                    var notConfirmedResponse = new ResponseResult();
+                    notConfirmedResponse.Message = "Tài khoản của bạn chưa được xét duyệt.";
+                    response.Message = notConfirmedResponse.Message;
+                    return response.ToHttpResponse();
+            }
+
+            response.Message = "Sai email hoặc mật khẩu.";
+            return response.ToHttpResponse();
+
+        }
+
+        /// <summary>
+        /// Change password
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        [HttpPost("password/change")]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordViewModel changePassword)
+        {
+            if (ModelState.IsValid)
+                return await _userService.ChangePassword(id, changePassword);
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet("email/{email}")]
+        public async Task<IActionResult> GetByUsername(string email)
+        {
+            return await _userService.GetByEmail(email);
+        }
+
+        [HttpPost("password/reset")]
+        public async Task<IActionResult> ResetPassword(int id, string newPassword)
+        {
+            if (!string.IsNullOrEmpty(newPassword))
+                return await _userService.ResetPassword(id, newPassword);
+            return BadRequest("New password is not set.");
         }
 
         #endregion

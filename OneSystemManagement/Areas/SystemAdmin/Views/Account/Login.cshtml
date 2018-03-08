@@ -1,0 +1,41 @@
+﻿@model OneSystemManagement.Areas.SystemAdmin.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập hệ thống";
+    Layout = "~/Areas/systemadmin/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Row -->
+<div class="table-struct full-width full-height">
+    <div class="table-cell vertical-align-middle auth-form-wrap">
+        <div class="auth-form  ml-auto mr-auto no-float">
+            <div class="row">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="mb-30">
+                        <h3 class="text-center txt-dark mb-10">Đăng nhập OneOffice</h3>
+                        <h6 class="text-center nonecase-font txt-grey">Bạn phải là người quản trị mới có thể đăng nhập</h6>
+                    </div>
+                    <div class="form-wrap">
+                        <form asp-area="SystemAdmin" asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" asp-controller="Account" method="post">
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(false, null, new { @class = "text-danger" })
+                            <br/>
+                            <div class="form-group">
+                                <label class="control-label mb-10" asp-for="Email"></label>
+                                <input type="email" asp-for="Email" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="pull-left control-label mb-10" asp-for="Password"></label>
+                                <input type="password" asp-for="Password" class="form-control">
+                            </div>
+
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-info btn-success btn-rounded">Đăng nhập</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Row -->
