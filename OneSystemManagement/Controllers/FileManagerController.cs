@@ -6,6 +6,7 @@ namespace OneSystemManagement.Controllers
     public class FileManagerController : Controller
     {
         [Route("file-manager/{subFolder?}")]
+        [NonAction]
         public virtual IActionResult Index(string subFolder)
         {
             var model = new FileViewModel()

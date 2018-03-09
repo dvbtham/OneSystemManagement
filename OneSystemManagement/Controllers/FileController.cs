@@ -12,6 +12,7 @@ namespace OneSystemManagement.Controllers
     public class FileController : Controller
     {
         [Route("connector")]
+        [NonAction]
         public virtual async Task<IActionResult> Index(string folder, string subFolder)
         {
             var driver = new FileSystemDriver();
@@ -48,6 +49,7 @@ namespace OneSystemManagement.Controllers
         }
 
         [Route("select-file")]
+        [NonAction]
         public virtual IActionResult SelectFile(string target)
         {
             var driver = new FileSystemDriver();
