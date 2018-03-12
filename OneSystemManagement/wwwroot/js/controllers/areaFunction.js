@@ -44,7 +44,9 @@
                 function (e) {
                     e.preventDefault();
                     $("#function-lbl").text($(this).data("parentname"));
+                    $(".select2").val($(this).data("parentid")).trigger("change");
                     dataWithFunctionParent.id = $(this).data("id");
+                    dataWithFunctionParent.parentId = $(".select2 :selected").val();
                     $("#myModal").modal();
                 });
 

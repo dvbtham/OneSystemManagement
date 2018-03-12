@@ -1,4 +1,5 @@
-﻿@using OneSystemManagement.Controllers.Resources
+﻿@using OneSystemAdminApi.Core.EntityLayer
+@using OneSystemManagement.Controllers.Resources
 @model IEnumerable<OneSystemManagement.Core.ViewModels.AreaTreeViewVm>
 @{
     ViewData["Title"] = "Phân vùng chức năng";
@@ -90,7 +91,7 @@
                                                             @function.Name
                                                             @if (checkedClass != "disabled")
                                                             {
-                                                                <span class="pull-right edit-action" data-parentName="@function.Name"  data-id="@function.Id">
+                                                                <span class="pull-right edit-action" data-parentId="@function.Parent?.Id" data-parentName="@function.Name"  data-id="@function.Id">
                                                                     <i class="fa fa-edit" title="Đặt trong chức năng khác"></i>
                                                                 </span>
                                                             }
@@ -109,7 +110,7 @@
                                                                 @f.Name
                                                                 @if (checkedChildClass != "disabled")
                                                                 {
-                                                                    <span class="pull-right edit-action" data-parentName="@f.Name"  data-id="@f.Id">
+                                                                    <span class="pull-right edit-action" data-parentId="@f.Parent?.Id" data-parentName="@f.Name"  data-id="@f.Id">
                                                                         <i class="fa fa-edit" title="Đặt trong chức năng khác"></i>
                                                                     </span>
                                                                 }
