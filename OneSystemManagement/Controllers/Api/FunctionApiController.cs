@@ -36,6 +36,12 @@ namespace OneSystemManagement.Controllers.Api
             return await _functionService.GetAsync(id);
         }
 
+        [HttpGet("byroleId/{roleId}")]
+        public async Task<IActionResult> FunctionListByRole(int roleId)
+        {
+            return await _functionService.FunctionListByRole(roleId);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaveFunctionResource resource)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,16 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
     public class FunctionService : IFunctionService
     {
         private readonly IRepository<Function> _functionRepository;
+        private readonly IRepository<Role> _roleRepository;
         private readonly IRoleFunctionService _roleFunctionService;
         private readonly IMapper _mapper;
 
         public FunctionService(IRepository<Function> functionRepository,
-            IRoleFunctionService roleFunctionService, IMapper mapper)
+            IRepository<Role> roleRepository, IRoleFunctionService roleFunctionService,
+            IMapper mapper)
         {
             _functionRepository = functionRepository;
+            _roleRepository = roleRepository;
             _roleFunctionService = roleFunctionService;
             _mapper = mapper;
         }
@@ -183,6 +187,31 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
                 response.Model = _mapper.Map<Function, FunctionResource>(entity);
                 response.Message = "The record was deleted successfully";
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.Message;
+            }
+
+            return response.ToHttpResponse();
+        }
+
+        public async Task<IActionResult> FunctionListByRole(int roleId)
+        {
+            var response = new ListModelResponse<FunctionResource>();
+
+            try
+            {
+                var role = _roleRepository.Query()
+                    .Include(x => x.RoleFunctions)
+                        .ThenInclude(x => x.Function)
+                    .SingleOrDefault(x => x.Id == roleId);
+
+                var functions = role?.RoleFunctions.Select(x => x.Function).ToList();
+
+                response.Model = _mapper.Map<IList<Function>, IList<FunctionResource>>(functions);
+                response.Message = string.Format("Total of records: {0}", response.Model.Count());
             }
             catch (Exception ex)
             {

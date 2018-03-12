@@ -1,0 +1,146 @@
+﻿@using OneSystemManagement.Controllers.Resources
+@model IEnumerable<OneSystemManagement.Core.ViewModels.AreaTreeViewVm>
+@{
+    ViewData["Title"] = "Phân vùng chức năng";
+    var functions = (IList<KeyValuePairResource>)ViewBag.Functions;
+}
+
+@section PageTitle
+    {
+    <!-- Title -->
+    <div class="row heading-bg">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h5 class="txt-dark">@ViewData["Title"]</h5>
+        </div>
+        <!-- Breadcrumb -->
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <ol class="breadcrumb">
+                <li><a asp-area="SystemAdmin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+                <li class="active"><span>QL phân quyền và phân vùng</span></li>
+            </ol>
+        </div>
+        <!-- /Breadcrumb -->
+    </div>
+    <!-- /Title -->
+}
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Phân chức năng</h4>
+            </div>
+            <div class="modal-body">
+                <p>Phân cho chức năng <strong id="function-lbl"></strong>, nằm trong </p>
+                <select class="select2" name="ParentFunctionList">
+                    <option value="0"></option>
+                    @foreach (var func in functions)
+                    {
+                        <option value="@func.Id">@func.Name</option>
+                    }
+
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary" id="saveParentChange">Lưu Lại</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="col-sm-12">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading">
+            <div class="pull-left">
+                <h6 class="panel-title txt-dark">Thông tin chức năng</h6>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="form-wrap">
+
+                    <div class="container">
+                        <ul role="menu">
+                            @foreach (var item in Model)
+                            {
+                                <li class="block-container col-sm-3">
+                                    <ul>
+                                        <li>
+                                            <a href="#" class="text-area" data-area="@item.Area.Id">
+                                                <h5>@item.Area.Name</h5>
+                                            </a>
+                                        </li>
+                                        @if (item.Functions.Any())
+                                        {
+                                            foreach (var function in item.Functions)
+                                            {
+                                                var checkedClass = item.AreaFunctions.Select(x => x.Id).Contains(function.Id) ? "checked='checked'" : "disabled";
+                                                <li class="link_container group_header"
+                                                    data-child="@function.ChildItems.Count"
+                                                    data-id="@function.Id"
+                                                    data-parentName="@function.Name">
+                                                    <div class="checkbox checkbox-primary">
+                                                        <input id="@item.Area.Id@function.Id" data-id="@function.Id" data-area="@item.Area.Id" class="parentFunction_@function.Id" type="checkbox" @checkedClass>
+                                                        <label for="@item.Area.Id@function.Id">
+                                                            @function.Name
+                                                            @if (checkedClass != "disabled")
+                                                            {
+                                                                <span class="pull-right edit-action" data-parentName="@function.Name"  data-id="@function.Id">
+                                                                    <i class="fa fa-edit" title="Đặt trong chức năng khác"></i>
+                                                                </span>
+                                                            }
+                                                           
+                                                        </label>
+
+                                                    </div>
+                                                </li>
+                                                foreach (var f in function.ChildItems)
+                                                {
+                                                    var checkedChildClass = item.AreaFunctions.Select(x => x.Id).Contains(f.Id) ? "checked='checked'" : "disabled";
+                                                    <li class="link_container childName" data-childName="@f.Name">
+                                                        <div class="checkbox checkbox-primary">
+                                                            <input id="@item.Area.Id@f.Id" data-id="@f.Id" data-area="@item.Area.Id" class="childFunction_@f.Id" type="checkbox" @checkedChildClass>
+                                                            <label for="@item.Area.Id@f.Id">
+                                                                @f.Name
+                                                                @if (checkedChildClass != "disabled")
+                                                                {
+                                                                    <span class="pull-right edit-action" data-parentName="@f.Name"  data-id="@f.Id">
+                                                                        <i class="fa fa-edit" title="Đặt trong chức năng khác"></i>
+                                                                    </span>
+                                                                }
+                                                            </label>
+
+                                                        </div>
+                                                    </li>
+                                                }
+
+                                            }
+                                        }
+
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <button class="btn btn-primary" type="button" id="save">Lưu thay đổi</button>
+                <button class="btn btn-warning" type="button" id="reload">Tải lại</button>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <!-- Select2 JavaScript -->
+    <script src="/theme/vendors/bower_components/select2/dist/js/select2.full.min.js"></script>
+    <script src="~/js/controllers/areaFunction.js"></script>
+}

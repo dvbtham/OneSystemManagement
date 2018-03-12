@@ -9,6 +9,7 @@ using OneSystemManagement.Core.Extensions;
 using OneSystemManagement.Core.Extensions.HttpClient;
 using OneSystemManagement.Core.Responses;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace OneSystemManagement.Areas.SystemAdmin.Controllers
@@ -17,11 +18,19 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
     {
         private readonly IMapper _mapper;
 
-        public async Task<IActionResult> Index(bool isAlert = false)
+        public async Task<IActionResult> Index(int roleId, bool isAlert = false, bool functionByRole = false)
         {
             if (isAlert) AlertShow();
-            var response = await HttpRequestFactory.Get(BaseUrl + "/api/function");
-            var outputModel = response.ContentAsType<ListModelResponse<FunctionViewModel>>();
+            var response = new HttpResponseMessage();
+            var outputModel = new ListModelResponse<FunctionViewModel>();
+            if (functionByRole)
+            {
+                response = await HttpRequestFactory.Get(BaseUrl + "/api/function/byroleId/" + roleId);
+                outputModel = response.ContentAsType<ListModelResponse<FunctionViewModel>>();
+                return View(outputModel);
+            }
+            response = await HttpRequestFactory.Get(BaseUrl + "/api/function");
+            outputModel = response.ContentAsType<ListModelResponse<FunctionViewModel>>();
             return View(outputModel);
         }
 

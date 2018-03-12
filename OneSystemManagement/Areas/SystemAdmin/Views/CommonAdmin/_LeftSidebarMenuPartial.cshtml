@@ -30,10 +30,24 @@
         </li>
 
         <li>
-            <a asp-area="SystemAdmin" asp-action="Index" asp-controller="Area"><i class="zmdi zmdi-apps mr-20"></i>Khu Vực</a>
+            <a asp-area="SystemAdmin" asp-action="Index" asp-controller="Area"><i class="zmdi zmdi-apps mr-20"></i>QL Vùng</a>
         </li>
+       
         <li>
-            <a asp-area="SystemAdmin" asp-action="Index" asp-controller="Function"><i class="zmdi zmdi-archive mr-20"></i>Chức năng</a>
+            <a href="javascript:void(0);" data-toggle="collapse" data-target="#function_toggle">
+                <div class="pull-left"><i class="zmdi zmdi-accounts mr-10"></i><span class="right-nav-text">Chức năng</span></div>
+                <div class="pull-right"><span class="fa fa-caret-down"></span></div><div class="clearfix"></div>
+                <div class="clearfix"></div>
+            </a>
+            <ul id="function_toggle" class="collapse collapse-level-1">
+                <li>
+                    <a asp-area="SystemAdmin" asp-action="Index" asp-controller="Function">QL Chức năng</a>
+                </li>
+                <li>
+                    <a asp-area="SystemAdmin" asp-action="Index" asp-controller="AreaFunction">Phân vùng chức năng</a>
+                </li>
+
+            </ul>
         </li>
     </ul>
 </div>

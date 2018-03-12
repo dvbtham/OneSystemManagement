@@ -22,8 +22,8 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
         [Display(Name = "Mã code")]
         public string CodeArea { get; set; }
 
-        [Required(ErrorMessage = "Bạn chưa nhập thông tin khu vực")]
-        [Display(Name = "Tên khu vực")]
+        [Required(ErrorMessage = "Bạn chưa nhập thông tin vùng")]
+        [Display(Name = "Tên vùng")]
         public string AreaName { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập mô tả")]

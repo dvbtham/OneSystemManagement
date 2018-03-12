@@ -65,6 +65,7 @@
                                                          url="@Url.Action("Edit","Role", new { id = item.Id })"
                                                          del-class-name="delete-role">
                                             </tbl-actions>
+                                            <a class="ml-5" href="/SystemAdmin/Function?roleId=@item.Id&functionByRole=true"> <i class="fa fa-lock"></i> Chức năng </a>
                                         </td>
                                     </tr>
                                     }

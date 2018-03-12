@@ -46,6 +46,7 @@
                                     <tr>
                                         <th>Mã code</th>
                                         <th>Tên chức năng</th>
+                                        <th>Vùng</th>
                                         <th>Chức năng cha</th>
                                         <th>Url</th>
                                         <th>Thao tác</th>
@@ -54,21 +55,22 @@
                                 <tbody>
                                     @foreach (var item in Model.Model)
                                     {
-                                        <tr>
-                                            <td>@item.CodeFunction</td>
-                                            <td>@item.FunctionName</td>
-                                            <td>@item.FunctionProp?.FunctionName</td>
-                                            <td><a href="@item.Url">@item.Url</a></td>
-                                            <td>
-                                                <tbl-actions tag-id="@item.Id"
-                                                             tag-name="@item.FunctionName"
-                                                             edit-label="Sửa"
-                                                             del-label="Xoá"
-                                                             url="@Url.Action("Edit","Function", new { id = item.Id })"
-                                                             del-class-name="delete-func">
-                                                </tbl-actions>
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>@item.CodeFunction</td>
+                                        <td>@item.FunctionName</td>
+                                        <td>@item.Area?.AreaName</td>
+                                        <td>@item.FunctionProp?.FunctionName</td>
+                                        <td><a href="@item.Url">@item.Url</a></td>
+                                        <td>
+                                            <tbl-actions tag-id="@item.Id"
+                                                         tag-name="@item.FunctionName"
+                                                         edit-label="Sửa"
+                                                         del-label="Xoá"
+                                                         url="@Url.Action("Edit","Function", new { id = item.Id })"
+                                                         del-class-name="delete-func">
+                                            </tbl-actions>
+                                        </td>
+                                    </tr>
                                     }
 
                                 </tbody>

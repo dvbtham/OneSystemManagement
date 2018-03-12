@@ -13,6 +13,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         Task<IActionResult> Create(SaveFunctionResource resource);
         Task<IActionResult> Update(int id, SaveFunctionResource resource);
         Task<IActionResult> Delete(int id);
+        Task<IActionResult> FunctionListByRole(int roleId);
         Task<Function> GetFunctionWithRelated(int id, bool include = true);
     }
 }
