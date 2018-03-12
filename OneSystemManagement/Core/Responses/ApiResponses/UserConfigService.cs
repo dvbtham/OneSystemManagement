@@ -139,20 +139,20 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             }
             try
             {
-                var area = await _userConfigRepository.FindAsync(x => x.Id == id);
+                var userConfig = await _userConfigRepository.FindAsync(x => x.Id == id);
 
-                if (area == null || resource == null)
+                if (userConfig == null)
                 {
                     response.DidError = true;
                     response.ErrorMessage = "Input could not be found.";
                     return response.ToHttpResponse();
                 }
 
-                _mapper.Map(resource, area);
+                _mapper.Map(resource, userConfig);
 
-                await _userConfigRepository.UpdateAsync(area);
+                await _userConfigRepository.UpdateAsync(userConfig);
 
-                response.Model = _mapper.Map(area, resource);
+                response.Model = _mapper.Map(userConfig, resource);
                 response.Message = "The data was saved successfully";
             }
             catch (Exception ex)

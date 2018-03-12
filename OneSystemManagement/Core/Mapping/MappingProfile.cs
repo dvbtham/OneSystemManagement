@@ -74,7 +74,7 @@ namespace OneSystemManagement.Core.Mapping
             //Domain to resource
             CreateMap<Area, AreaResource>();
             CreateMap<Area, AreaViewModel>()
-                .ForMember(avm => avm.Functions, 
+                .ForMember(avm => avm.Functions,
                 opt => opt.MapFrom(a => a.Functions.Select(f => new KeyValuePairResource
                 {
                     Id = f.Id,
@@ -144,6 +144,9 @@ namespace OneSystemManagement.Core.Mapping
                     UserCode = uc.User.UserCode,
                     Id = uc.User.Id
                 }));
+
+            CreateMap<UserConfigResource, UserConfig>()
+                .ForMember(x => x.Id, opt => opt.Ignore());
 
             //Resource to domain
             CreateMap<AreaResource, Area>().ForMember(ar => ar.Id, opt => opt.Ignore());
