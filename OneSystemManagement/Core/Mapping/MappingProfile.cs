@@ -25,6 +25,7 @@ namespace OneSystemManagement.Core.Mapping
                 .ForMember(u => u.IsActive, opt => opt.MapFrom(usr => usr.UserInfo.IsActive))
                 .ForMember(u => u.IsAdmin, opt => opt.MapFrom(usr => usr.UserInfo.IsAdmin))
                 .ForMember(u => u.IsMember, opt => opt.MapFrom(usr => usr.UserInfo.IsMember))
+                .ForMember(u => u.IsConfirm, opt => opt.MapFrom(usr => usr.UserInfo.IsConfirm))
                 .ForMember(u => u.IsPartner, opt => opt.MapFrom(usr => usr.UserInfo.IsPartner))
                 .ForMember(u => u.LoginFailed, opt => opt.MapFrom(usr => usr.UserInfo.LoginFailed))
                 .ForMember(u => u.Password, opt => opt.Ignore())

@@ -124,7 +124,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             {
                 var area = await _areaRepository.FindAsync(x => x.Id == id);
 
-                if (area == null || resource == null)
+                if (area == null)
                 {
                     response.DidError = true;
                     response.ErrorMessage = "Input could not be found.";

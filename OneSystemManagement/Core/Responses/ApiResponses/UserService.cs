@@ -79,7 +79,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 if (entity == null)
                 {
                     response.DidError = true;
-                    response.ErrorMessage = "Input could not be found.";
+                    response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
                     return response.ToHttpResponse();
                 }
                 var resource = new UserGridResource();
@@ -126,7 +126,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 var entityMap = await GetUserWithRelated(entity.Id);
 
                 response.Model = _mapper.Map<User, UserGridResource>(entityMap);
-                response.Message = "The data was saved successfully.";
+                response.Message = "Dữ liệu đã được lưu thành công.";
             }
             catch (Exception ex)
             {
@@ -149,7 +149,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 if (entity == null || resource == null)
                 {
                     response.DidError = true;
-                    response.ErrorMessage = "Input could not be found.";
+                    response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
                     return response.ToHttpResponse();
                 }
 
@@ -160,7 +160,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 var entityMap = await GetUserWithRelated(entity.Id);
 
                 response.Model = _mapper.Map<User, UserGridResource>(entityMap);
-                response.Message = "The data was saved successfully";
+                response.Message = "Dữ liệu đã được lưu thành công";
             }
             catch (Exception ex)
             {
@@ -183,7 +183,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 if (entity == null)
                 {
                     response.DidError = true;
-                    response.ErrorMessage = "Input could not be found.";
+                    response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
                     return response.ToHttpResponse();
                 }
 
@@ -192,7 +192,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 await _userRepository.UpdateAsync(entity);
 
                 response.Model = _mapper.Map<User, UserGridResource>(entity);
-                response.Message = "The record was deleted successfully";
+                response.Message = "Dữ liệu đã được xóa thành công";
             }
             catch (Exception ex)
             {
