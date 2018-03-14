@@ -114,53 +114,7 @@ namespace OneSystemManagement.Controllers.Api
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel request)
-        {
-            var loginCode = await _userService.Login(request.Email, request.Password, isAdminLogin: false);
-
-            switch (loginCode)
-            {
-                case (int)LoginStatus.Success:
-                    var claims = new[]
-                    {
-                        new Claim(ClaimTypes.Name, request.Email)
-                    };
-
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecurityKey"]));
-                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                    var token = new JwtSecurityToken(
-                        issuer: "oneoffice.vn",
-                        audience: "oneoffice.vn",
-                        claims: claims,
-                        expires: DateTime.Now.AddMinutes(30),
-                        signingCredentials: creds);
-
-                    return Ok(new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(token)
-                    });
-                    
-                case (int)LoginStatus.NotActived:
-                    return BadRequest("Tài khoản của bạn chưa được kích hoạt");
-
-                case (int)LoginStatus.NotConfirmed:
-                    return BadRequest("Tài khoản của bạn chưa được kiểm duyệt");
-            }
-
-            return BadRequest("Không tìm thất kết quả phù hợp");
-        }
-
-        /// <summary>
-        /// Login by email and password.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("adminlogin")]
-        public async Task<IActionResult> LoginAdmin([FromBody] LoginViewModel request, bool isAdminLogin = true)
+        public async Task<IActionResult> Login([FromBody] LoginViewModel request, bool isAdminLogin = false)
         {
             var loginCode = await _userService.Login(request.Email, request.Password, isAdminLogin: isAdminLogin);
             var response = new SingleModelResponse<ResponseResult>();
@@ -208,7 +162,6 @@ namespace OneSystemManagement.Controllers.Api
 
             response.Message = "Sai email hoặc mật khẩu.";
             return response.ToHttpResponse();
-
         }
 
         /// <summary>

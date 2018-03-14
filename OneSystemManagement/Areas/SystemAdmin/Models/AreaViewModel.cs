@@ -51,4 +51,23 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
 
         public ICollection<KeyValuePairResource> Functions { get; set; }
     }
+
+    public class UserEx
+    {
+        public IList<MyRole> MyRoles = new List<MyRole>();
+    }
+
+    public class MyRole
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public IList<MyArea> MyAreas { get; set; } = new List<MyArea>();
+    }
+
+    public class MyArea
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public IList<KeyValuePairResource> MyFunctions { get; set; } = new List<KeyValuePairResource>();
+    }
 }

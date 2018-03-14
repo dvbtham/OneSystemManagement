@@ -7,6 +7,7 @@ namespace OneSystemAdminApi.Core.EntityLayer
         public Area()
         {
             Functions = new HashSet<Function>();
+            RoleFunctions = new HashSet<RoleFunction>();
         }
 
         public int Id { get; set; }
@@ -15,5 +16,6 @@ namespace OneSystemAdminApi.Core.EntityLayer
         public string Description { get; set; }
 
         public ICollection<Function> Functions { get; set; }
+        public ICollection<RoleFunction> RoleFunctions { get; set; }
     }
 }

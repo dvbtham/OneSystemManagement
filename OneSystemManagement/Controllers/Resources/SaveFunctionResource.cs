@@ -16,7 +16,13 @@ namespace OneSystemManagement.Controllers.Resources
         public string FunctionName { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }
-        
+
+        [Display(Name = "Quyền đọc")]
+        public bool IsRead { get; set; } 
+
+        [Display(Name = "Quyền ghi")]
+        public bool IsWrite { get; set; }
+
         public ICollection<int> Roles { get; set; } = new List<int>();
     }
 }

@@ -19,7 +19,11 @@ namespace OneSystemManagement.Core
             CreateMap<RoleViewModel, RoleViewModel>();
 
             CreateMap<Function, FunctionViewModel>()
-                .ForMember(x => x.Functions, opt => opt.MapFrom(x => x.Functions.Select(f => new KeyValuePairResource { Id = x.FunctionProp.Id, Name = x.FunctionProp.FunctionName })));
+                .ForMember(x => x.Functions, opt => opt.MapFrom(x => x.Functions.Select(f => new KeyValuePairResource { Id = x.FunctionProp.Id, Name = x.FunctionProp.FunctionName })))
+                .ForMember(ug => ug.IsRead,
+                    opt => opt.MapFrom(u => u.RoleFunctions.Select(f => f.IsRead)))
+                .ForMember(ug => ug.IsWrite,
+                    opt => opt.MapFrom(u => u.RoleFunctions.Select(f => f.IsWrite))); ;
             CreateMap<FunctionViewModel, Function>().ForMember(x => x.Id, opt => opt.Ignore());
             CreateMap<FunctionViewModel, FunctionViewModel>();
 

@@ -23,6 +23,12 @@ namespace OneSystemAdminApi.Core.EntityMapping
                     .HasForeignKey(d => d.IdRole)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_RoleFunctions_Roles");
+
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.RoleFunctions)
+                    .HasForeignKey(d => d.AreaId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_RoleFunctions_Areas");
             });
         }
     }

@@ -240,24 +240,26 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
             if (!user.IsConfirm) return (int)LoginStatus.NotConfirmed;
 
+            var md5Hash = MD5.Create();
+            var loginResult = PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password);
+
             if (isAdminLogin)
             {
                 if (user.IsAdmin)
                 {
-                    var md5Hash = MD5.Create();
-                    if (PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password) == true)
+                    if (loginResult)
                         return (int)LoginStatus.Success;
                     return (int)LoginStatus.IncorrectEmailAndPass;
                 }
-                    
-
                 return (int)LoginStatus.NotAdmin;
             }
 
-             return (int)LoginStatus.IncorrectEmailAndPass;
+            if (loginResult)
+                return (int)LoginStatus.Success;
+            return (int)LoginStatus.IncorrectEmailAndPass;
 
         }
-        
+
         [HttpDelete("email/{email}")]
         public async Task<IActionResult> GetByEmail(string email)
         {

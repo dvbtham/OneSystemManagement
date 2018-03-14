@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoMapper;
 using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Controllers.Resources;
@@ -63,7 +64,14 @@ namespace OneSystemManagement.Core.Mapping
                     // Add new Roles
                     var addedRoles = fr.Roles
                         .Where(id => f.RoleFunctions.All(x => x.IdRole != id))
-                        .Select(id => new RoleFunction { IdRole = id }).ToList();
+                        .Select(id => new RoleFunction
+                        {
+                            IdRole = id,
+                            AreaId = fr.IdArea.Value,
+                            IsRead = fr.IsRead,
+                            IsWrite = fr.IsWrite,
+                            CreateDate = DateTime.Now
+                        }).ToList();
 
                     foreach (var arf in addedRoles)
                         f.RoleFunctions.Add(arf);

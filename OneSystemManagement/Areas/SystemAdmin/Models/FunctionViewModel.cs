@@ -39,6 +39,12 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
         [Required(ErrorMessage = "Bạn chưa nhập Url")]
         public string Url { get; set; }
 
+        [Display(Name = "Quyền đọc")]
+        public bool IsRead { get; set; } = false;
+
+        [Display(Name = "Quyền ghi")]
+        public bool IsWrite { get; set; } = false;
+
         public AreaResource Area { get; set; }
 
         public ICollection<KeyValuePairResource> Functions { get; set; }
@@ -46,7 +52,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
         public ICollection<KeyValuePairResource> Roles { get; set; } = new List<KeyValuePairResource>();
         public ICollection<KeyValuePairResource> AllRole { get; set; } = new List<KeyValuePairResource>();
         
-        [Display(Name = "Quyền")]
+        [Display(Name = "Phân vào nhóm")]
         public IList<int> RoleIds { get; set; } = new List<int>();
 
         public FunctionResource FunctionProp { get; set; }

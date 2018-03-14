@@ -80,8 +80,9 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            var response = await HttpRequestFactory.Post(BaseUrl + "/api/user/adminlogin", model);
-            var outputModel = response.ContentAsType<SingleModelResponse<ResponseResult>>();
+            var response = await HttpRequestFactory.Post(BaseUrl + "/api/user/login?isAdminLogin=true", model);
+
+        var outputModel = response.ContentAsType<SingleModelResponse<ResponseResult>>();
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError("loginStatus", outputModel.Message);

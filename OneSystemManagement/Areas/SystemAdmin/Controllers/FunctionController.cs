@@ -67,7 +67,9 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                 IdFunctionParent = model.IdFunctionParent,
                 Description = model.Description,
                 Roles = model.RoleIds,
-                Url = model.Url
+                Url = model.Url,
+                IsWrite = model.IsWrite,
+                IsRead = model.IsRead
             };
 
             var response = await HttpRequestFactory.Post(BaseUrl + "/api/function", saveFunctionResource);
@@ -118,7 +120,9 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                 IdFunctionParent = model.IdFunctionParent,
                 Description = model.Description,
                 Roles = model.RoleIds,
-                Url = model.Url
+                Url = model.Url,
+                IsWrite = model.IsWrite,
+                IsRead = model.IsRead
             };
 
             var response = await HttpRequestFactory.Put(BaseUrl + "/api/function/" + model.Id, saveFunctionResource);

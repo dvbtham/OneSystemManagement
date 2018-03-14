@@ -226,7 +226,8 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         {
             if (!include)
             {
-                var entityFalse = await _functionRepository.Query().SingleOrDefaultAsync(x => x.Id == id);
+                var entityFalse = await _functionRepository.Query()
+                    .SingleOrDefaultAsync(x => x.Id == id);
 
                 return entityFalse;
             }
