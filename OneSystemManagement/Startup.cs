@@ -18,6 +18,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using OneSystemAdminApi.Core.DataLayer;
+using OneSystemManagement.Core.CustomAttribute;
 
 namespace OneSystemManagement
 {
@@ -129,6 +130,14 @@ namespace OneSystemManagement
                 options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
             });
 
+            services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.Name = ".Fiver.Session";
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+            });
+
             return services.RegisterService(Configuration, _hostingEnvironment);
         }
 
@@ -157,6 +166,8 @@ namespace OneSystemManagement
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseSession();
 
             app.UseMvc(routes =>
             {

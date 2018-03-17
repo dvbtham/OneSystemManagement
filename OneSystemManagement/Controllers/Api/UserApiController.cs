@@ -117,7 +117,7 @@ namespace OneSystemManagement.Controllers.Api
         public async Task<IActionResult> Login([FromBody] LoginViewModel request, bool isAdminLogin = false)
         {
             var loginCode = await _userService.Login(request.Email, request.Password, isAdminLogin: isAdminLogin);
-            var response = new SingleModelResponse<ResponseResult>();
+            var response = new SingleModelResponse<TokenResult>();
             switch (loginCode)
             {
                 case (int)LoginStatus.Success:
@@ -136,31 +136,29 @@ namespace OneSystemManagement.Controllers.Api
                         expires: DateTime.Now.AddMinutes(30),
                         signingCredentials: creds);
 
-                    return Ok(new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(token)
-                    });
+                    response.Message = "Đăng nhập thành công";
+                    response.DidError = false;
+                    response.Model = new TokenResult{ Token = new JwtSecurityTokenHandler().WriteToken(token) };
+                    return response.ToHttpResponse();
 
                 case (int)LoginStatus.NotAdmin:
-                    var notAdminResponse = new ResponseResult();
-                    notAdminResponse.Message = "Bạn không có quyền truy cập.";
-                    response.Message = notAdminResponse.Message;
+                    response.ErrorMessage = "Bạn không có quyền truy cập.";
+                    response.DidError = true;
                     return response.ToHttpResponse();
 
                 case (int)LoginStatus.NotActived:
-                    var notActivedResponse = new ResponseResult();
-                    notActivedResponse.Message = "Tài khoản của bạn chưa được kích hoạt.";
-                    response.Message = notActivedResponse.Message;
+                    response.ErrorMessage = "Tài khoản của bạn chưa được kích hoạt.";
+                    response.DidError = true;
                     return response.ToHttpResponse();
 
                 case (int)LoginStatus.NotConfirmed:
-                    var notConfirmedResponse = new ResponseResult();
-                    notConfirmedResponse.Message = "Tài khoản của bạn chưa được xét duyệt.";
-                    response.Message = notConfirmedResponse.Message;
+                    response.ErrorMessage = "Tài khoản của bạn chưa được xét duyệt.";
+                    response.DidError = true;
                     return response.ToHttpResponse();
             }
 
-            response.Message = "Sai email hoặc mật khẩu.";
+            response.ErrorMessage = "Sai email hoặc mật khẩu.";
+            response.DidError = true;
             return response.ToHttpResponse();
         }
 

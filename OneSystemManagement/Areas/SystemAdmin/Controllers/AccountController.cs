@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OneSystemAdminApi.Core.DataLayer;
+using OneSystemAdminApi.Core.EntityLayer;
 using OneSystemManagement.Areas.SystemAdmin.Models;
 using OneSystemManagement.Controllers.Resources;
 using OneSystemManagement.Core.Extensions.HttpClient;
@@ -17,8 +20,11 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
 {
     public class AccountController : BaseAdminController
     {
-        public AccountController(IOptions<AppSettings> appSettings) : base(appSettings)
+        private readonly IRepository<User> _userRepository;
+
+        public AccountController(IOptions<AppSettings> appSettings, IRepository<User> userRepository) : base(appSettings)
         {
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -26,6 +32,13 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult UnAuthorized()
+        {
             return View();
         }
 
@@ -40,7 +53,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
         {
             var userResponse = await HttpRequestFactory.Get(BaseUrl + "/api/user/email/" + email);
             var outputUser = userResponse.ContentAsType<SingleModelResponse<UserResource>>();
-            
+
             return outputUser;
 
         }
@@ -82,17 +95,22 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
         {
             var response = await HttpRequestFactory.Post(BaseUrl + "/api/user/login?isAdminLogin=true", model);
 
-        var outputModel = response.ContentAsType<SingleModelResponse<ResponseResult>>();
+            var outputModel = response.ContentAsType<SingleModelResponse<ResponseResult>>();
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError("loginStatus", outputModel.Message);
                 return View(model);
             }
+            var user = await _userRepository.Query()
+                .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+                .SingleOrDefaultAsync(x => x.Email == model.Email);
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, model.Email, ClaimValueTypes.String)
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim("Identifer", user.UserIdentifier)
             };
+            claims.AddRange(user.UserRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole.Role.CodeRole)));
             var userIdentity = new ClaimsIdentity(claims, "SecureLogin");
             var userPrincipal = new ClaimsPrincipal(userIdentity);
 

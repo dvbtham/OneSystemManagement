@@ -6,7 +6,7 @@ using OneSystemAdminApi.Core.DataLayer;
 namespace OneSystemManagement.Areas.SystemAdmin.Controllers
 {
     [Area("systemadmin")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class BaseAdminController : Controller
     {
         public BaseAdminController(IOptions<AppSettings> appSettings)

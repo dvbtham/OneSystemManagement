@@ -4,4 +4,8 @@
     {
         public string Message { get; set; }
     }
+    public class TokenResult
+    {
+        public string Token { get; set; }
+    }
 }

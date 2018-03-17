@@ -34,6 +34,10 @@ namespace OneSystemAdminApi.Core.EntityMapping
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
 
+                entity.Property(e => e.UserIdentifier).HasMaxLength(268);
+
+                entity.HasIndex(e => e.UserIdentifier).IsUnique();
+
                 entity.Property(e => e.QuestionAnswer).HasMaxLength(500);
 
                 entity.Property(e => e.QuestionCode).HasMaxLength(300);

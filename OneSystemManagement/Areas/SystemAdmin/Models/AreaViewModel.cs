@@ -68,6 +68,14 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IList<KeyValuePairResource> MyFunctions { get; set; } = new List<KeyValuePairResource>();
+        public IList<FunctionWithRole> MyFunctions { get; set; } = new List<FunctionWithRole>();
+    }
+
+    public class FunctionWithRole
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool IsRead { get; set; }
+        public bool IsWrite { get; set; }
     }
 }

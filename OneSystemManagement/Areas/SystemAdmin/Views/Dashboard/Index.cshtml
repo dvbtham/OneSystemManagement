@@ -1,7 +1,7 @@
-﻿@model OneSystemManagement.Areas.SystemAdmin.Models.UserEx
+﻿@using Microsoft.AspNetCore.Http
+@model OneSystemManagement.Areas.SystemAdmin.Models.UserEx
 @{
-    ViewData["Title"] = "OneSystem Admin";
-    Layout = null;
+    ViewData["Title"] = "Trang chủ Admin";
 }
 @section PageTitle
     {
@@ -22,26 +22,81 @@
     </div>
     <!-- /Title -->
 }
-<ul>
-    @foreach (var r in Model.MyRoles)
-    {
-        <li>
-            @r.Name - @r.Id
-        <ul>
-            @foreach (var a in r.MyAreas)
-            {
-            <li>
-                @a.Name - @a.Id
-                <ul>
-                    @foreach (var f in a.MyFunctions)
-        {
-                    <li>@f.Name - @f.Id</li>
-}
-                </ul>
-            </li>
-        }
-        </ul>
-    </li>
-}
+@Context.Session.GetString("UserData")
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default card-view">
+            <div class="panel-wrapper collapse in">
+                <div class="panel-body">
+                    <form asp-controller="Dashboard"
+                          asp-action="GetAreasAsync"
+                          data-ajax-begin="onBegin" data-ajax-complete="onComplete"
+                          data-ajax-failure="onFailed" data-ajax-success="onSuccess"
+                          data-ajax="true" data-ajax-method="GET">
+                        <div class="col-md-4">
+                            <label class="control-label">Bạn đang sở hữu @Model.MyRoles.Count quyền truy cập.</label>
+                            @foreach (var r in Model.MyRoles)
+                            {
+                                <div class="form-group">
+                                    <div class="radio radio-success">
+                                        <input id="@r.Id@r.Name" value="@r.Id" name="roleIds" type="radio">
+                                        <label class="checkbox-inline" for="@r.Id@r.Name">@r.Name</label>
+                                    </div>
+                                </div>
+                            }
+                            <input type="hidden" name="roleId" />
+                            <button type="submit" class="btn btn-sm btn-primary" id="load">Load</button>
+                        </div>
+                    </form>
 
-</ul>
+                    <div class="col-md-8" id="htmlResult">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var results = $("#htmlResult");
+
+        var onBegin = function () {
+
+        };
+
+        var onComplete = function () {
+
+        };
+
+        var onSuccess = function (context) {
+            results.html(context).fadeIn();
+        };
+
+        var onFailed = function (context) {
+            $.toast({
+                heading: "Không thành công",
+                text: "Đã xảy ra lỗi!",
+                position: "top-center",
+                loaderBg: "#4dd4a8",
+                icon: "error",
+                hideAfter: 3500
+            });
+            console.log(context.responseText);
+        };
+        if ($("input[name='roleIds']:checked").length === 0) {
+            $("#load").attr("disabled", true);
+        }
+        $("input[name='roleIds']").on("change",
+            function () {
+                $("input[name='roleId']").val($("input[name='roleIds']:checked").val());
+                if ($("input[name='roleIds']:checked").length === 0) {
+                    $("#load").attr("disabled", true);
+                } else {
+                    $("#load").attr("disabled", false);
+                }
+                console.log($("input[name='roleId']").val());
+            });
+    </script>
+}
