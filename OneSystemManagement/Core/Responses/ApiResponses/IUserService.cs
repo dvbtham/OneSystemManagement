@@ -17,6 +17,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         Task<User> GetUserWithRelated(int id, bool include = true);
         Task<int> Login(string email, string password, bool isAdminLogin = false);
         Task<IActionResult> GetByEmail(string email);
+        Task<IActionResult> GetAreasByEmail(string email);
 
         Task<bool> UserVerifyAsync(string email, string password);
         Task<IActionResult> ChangePassword(int id, ChangePasswordViewModel changePassword);

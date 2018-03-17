@@ -48,7 +48,7 @@ namespace OneSystemManagement.Controllers.Api
         #region CRUD Methods
 
         /// <summary>
-        /// Return user list with paging.
+        /// Danh sách người dùng
         /// </summary>
         /// <param name="pageSize"></param>
         /// <param name="pageNumber"></param>
@@ -61,7 +61,7 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         /// <summary>
-        /// Get user by id.
+        /// Người dùng theo Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -72,7 +72,7 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         /// <summary>
-        /// Add new user to database.
+        /// Thêm mới người dùng
         /// </summary>
         /// <param name="resource"></param>
         /// <returns></returns>
@@ -83,7 +83,7 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         /// <summary>
-        /// Update existing user.
+        /// Cập nhật thông tin người dùng
         /// </summary>
         /// <param name="id"></param>
         /// <param name="resource"></param>
@@ -95,7 +95,7 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         /// <summary>
-        /// Delete existing user by id.
+        /// Xóa người dùng theo Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -106,7 +106,7 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         /// <summary>
-        /// Login by email and password.
+        /// Đăng nhập hệ thống
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
@@ -163,7 +163,7 @@ namespace OneSystemManagement.Controllers.Api
         }
 
         /// <summary>
-        /// Change password
+        /// Đổi mật khẩu
         /// </summary>
         /// <param name="id"></param>
         /// <param name="password"></param>
@@ -176,12 +176,34 @@ namespace OneSystemManagement.Controllers.Api
             return BadRequest(ModelState);
         }
 
+        /// <summary>
+        /// Người dùng theo email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         [HttpGet("email/{email}")]
         public async Task<IActionResult> GetByUsername(string email)
         {
             return await _userService.GetByEmail(email);
         }
 
+        /// <summary>
+        /// Lấy tất cả vùng, chức năng của người dùng theo quyền hạn
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [HttpGet("areas/{email}")]
+        public async Task<IActionResult> GetAreasByEmail(string email)
+        {
+            return await _userService.GetAreasByEmail(email);
+        }
+
+        /// <summary>
+        /// Đặt lại mật khẩu
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
         [HttpPost("password/reset")]
         public async Task<IActionResult> ResetPassword(int id, string newPassword)
         {

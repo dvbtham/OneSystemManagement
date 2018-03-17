@@ -103,7 +103,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             if (resource == null)
             {
                 response.DidError = true;
-                response.ErrorMessage = "Input cannot be null.";
+                response.ErrorMessage = "Bạn đang truyền vào dữ liệu rỗng";
                 return response.ToHttpResponse();
             }
 
@@ -115,7 +115,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 if (_userRepository.Query().Any(x => x.Email == resource.UserInfo.Email))
                 {
                     response.DidError = true;
-                    response.ErrorMessage = "This email is already register.";
+                    response.ErrorMessage = "Email đã có người sử dụng.";
                     return response.ToHttpResponse();
                 }
 
@@ -171,6 +171,11 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
+        /// <summary>
+        /// Xóa người dùng
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -222,7 +227,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
         }
         /// <summary>
-        /// 10: Success
+        /// Đăng nhập hệ thống
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
@@ -259,7 +264,11 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             return (int)LoginStatus.IncorrectEmailAndPass;
 
         }
-
+        /// <summary>
+        /// Lấy người dùng theo email nhập vào
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         [HttpDelete("email/{email}")]
         public async Task<IActionResult> GetByEmail(string email)
         {
@@ -288,6 +297,66 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
+        /// <summary>
+        /// Lấy tất cả vùng, chức năng của người dùng theo quyền hạn
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetAreasByEmail(string email)
+        {
+            var response = new SingleModelResponse<UserEx>();
+
+            var data = _userRepository.Query()
+                .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+                .ThenInclude(x => x.RoleFunctions)
+                .ThenInclude(x => x.Area)
+                .ThenInclude(x => x.RoleFunctions)
+                .ThenInclude(x => x.Function)
+                .SingleOrDefault(x => x.Email == email);
+
+            if (data == null)
+            {
+                response.Message = "Không tìm thấy dữ liệu.";
+                return response.ToHttpResponse();
+            }
+
+            var dataEx = new UserEx
+            {
+                MyRoles = data.UserRoles.Select(usr => new MyRole
+                {
+                    Id = usr.Role.Id,
+                    Name = usr.Role.RoleName,
+                    MyAreas = usr.Role.RoleFunctions.GroupBy(grf => grf.AreaId)
+                        .Select(grf => grf.First())
+                        .Select(rf => new MyArea
+                        {
+                            Id = rf.Area.Id,
+                            Name = rf.Area.AreaName,
+                            MyFunctions = rf.Area.RoleFunctions
+                                .Where(mfrf => mfrf.IdRole == usr.IdRole && mfrf.AreaId == rf.AreaId && rf.Area.Functions.Select(mf => mf.Id).Contains(mfrf.IdFunction))
+                                .Select(kvrf => new FunctionWithRole
+                                {
+                                    Id = kvrf.Function.Id,
+                                    Name = kvrf.Function.FunctionName,
+                                    IsWrite = kvrf.IsWrite,
+                                    IsRead = kvrf.IsRead
+                                }).ToList()
+                        }).ToList()
+                }).ToList()
+            };
+
+            response.Model = dataEx;
+
+            return response.ToHttpResponse();
+        }
+
+        /// <summary>
+        /// Xác thực tài khoản
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public async Task<bool> UserVerifyAsync(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return false;
@@ -301,6 +370,12 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             return PasswordManager.VerifyMd5Hash(md5Hash, password, user.Password);
         }
 
+        /// <summary>
+        /// Đổi mật khẩu
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="changePassword"></param>
+        /// <returns></returns>
         public async Task<IActionResult> ChangePassword(int id, ChangePasswordViewModel changePassword)
         {
             var response = new SingleModelResponse<UserResultResource>();
@@ -340,6 +415,12 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
             return response.ToHttpResponse();
         }
 
+        /// <summary>
+        /// Đặt lại mật khẩu
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
         public async Task<IActionResult> ResetPassword(int id, string newPassword)
         {
             var response = new SingleModelResponse<UserResultResource>();
