@@ -237,7 +237,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return (int)LoginStatus.IncorrectEmailAndPass;
 
-            var user = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
+            var user = await _userRepository.Query().FirstOrDefaultAsync(x => x.Email == email);
 
             if (user == null) return (int)LoginStatus.IncorrectEmailAndPass;
 
