@@ -112,7 +112,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 var user = new User();
                 _mapper.Map(resource, user);
 
-                if (_userRepository.Query().Any(x => x.Email == resource.UserInfo.Email))
+                if (_userRepository.Query().Any(x => x.Email == resource.UserInfo.Email && x.IsActive))
                 {
                     response.DidError = true;
                     response.ErrorMessage = "Email đã có người sử dụng.";

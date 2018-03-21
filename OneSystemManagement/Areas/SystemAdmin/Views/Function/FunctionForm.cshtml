@@ -106,18 +106,6 @@
                             </select>
                             <span asp-validation-for="RoleIds" class="text-danger"></span>
                         </div>
-                        <label class="control-label">Quyền chức năng</label>
-                        <div class="form-group">
-                            <div class="checkbox checkbox-success checkbox-inline">
-                                <input id="IsRead" asp-for="IsRead" type="checkbox">
-                                <label class="checkbox-inline" asp-for="IsRead"></label>
-                            </div>
-                            <div class="checkbox checkbox-success checkbox-inline">
-                                <input id="IsWrite" asp-for="IsWrite" type="checkbox">
-                                <label class="checkbox-inline" asp-for="IsWrite"></label>
-                            </div>
-                        </div>
-
                         <div class="form-group mb-0">
                             <button type="submit" name="saveCommand" value="@Constants.SaveContinute" class="btn btn-success btn-anim"><i class="fa fa-check"></i><span class="btn-text">Lưu và Tiếp tục</span></button>
                             <button type="submit" name="saveCommand" value="@Constants.Save" class="btn btn-warning btn-anim"><i class="fa fa-sign-out"></i><span class="btn-text">Lưu và Thoát</span></button>
@@ -135,20 +123,6 @@
     <script>
         $(document).ready(function () {
             $('.multipleSelect').fastselect();
-            var selected = $(".multipleSelect :selected").val();
-            $('.multipleSelect').on("change",
-                function() {
-                    selected = $(".multipleSelect :selected").val();
-                    if (!selected) {
-                        $("#IsWrite").attr("disabled", true);
-                        $("#IsRead").attr("disabled", true);
-                    } else {
-                        $("#IsWrite").attr("disabled", false);
-                        $("#IsRead").attr("disabled", false);
-                    }
-                });
-
-            console.log(selected);
         })
     </script>
 }

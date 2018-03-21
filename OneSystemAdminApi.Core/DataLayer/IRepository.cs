@@ -16,10 +16,16 @@ namespace OneSystemAdminApi.Core.DataLayer
 
         Task<T> AddAsync(T entity);
 
+        T Add(T entity);
+
         Task UpdateAsync(T changes);
         void Update(T changes);
 
         Task<T> DeleteAsync(int id);
         Task<T> DeleteAsync(long id);
+
+        T Delete(int id);
+
+        void SaveChanges();
     }
 }

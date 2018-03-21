@@ -44,6 +44,12 @@ namespace OneSystemAdminApi.Core.DataLayer
             return entity;
         }
 
+        public T Add(T entity)
+        {
+            _dbContext.Set<T>().Add(entity);
+            return entity;
+        }
+
         public async Task UpdateAsync(T changes)
         {
             if (changes == null)
@@ -76,6 +82,23 @@ namespace OneSystemAdminApi.Core.DataLayer
             }
 
             return entity;
+        }
+
+        public T Delete(int id)
+        {
+            var entity = _dbContext.Set<T>().Find(id);
+
+            if (entity != null)
+            {
+                _dbContext.Set<T>().Remove(entity);
+            }
+
+            return entity;
+        }
+
+        public void SaveChanges()
+        {
+            _dbContext.SaveChanges();
         }
 
         public async Task<T> DeleteAsync(long id)

@@ -2,8 +2,9 @@
     background: #edf1f5;
     z-index: 99 !important;
 }
-.timeline-action { 
-    display: none; 
+
+.timeline-action {
+    display: none;
     transition: 600s ease-in;
     -webkit-transition: 600s ease-in;
 }
@@ -46,14 +47,14 @@
 .image-with-action {
     width: 130px;
 }
-   
-    .delete-x {
-        padding-left: 5px;
-        position: absolute;
-        cursor: pointer;
-        color: #ed6f56;
-        font-weight: bold;
-    }
+
+.delete-x {
+    padding-left: 5px;
+    position: absolute;
+    cursor: pointer;
+    color: #ed6f56;
+    font-weight: bold;
+}
 
 
 .fstElement {
@@ -65,6 +66,7 @@
     font-size: 11px;
     background-color: #fff;
 }
+
 .fstResults {
     font-size: 10px;
 }
@@ -76,6 +78,7 @@
 
 .block-container {
     padding: 0 15px;
+    margin-bottom: 30px;
 }
 
 .action-block {
@@ -84,10 +87,10 @@
     padding-left: 0 !important;
 }
 
-.action-block span {
-    cursor: pointer;
-    padding-left: 8px;
-}
+    .action-block span {
+        cursor: pointer;
+        padding-left: 8px;
+    }
 
 .text-area > .action-block {
     padding-left: 38px;
@@ -162,10 +165,12 @@
 #main-menu li.dropdown:hover:before {
     display: block;
 }
+
 .edit-action {
     display: none;
     padding-left: 10px;
 }
+
 label:hover > .edit-action {
     display: block;
 }

@@ -1,0 +1,145 @@
+﻿@model OneSystemManagement.Areas.SystemAdmin.Models.RoleFunctionViewModel
+@{
+    ViewData["Title"] = "Phân quyền chức năng";
+}
+
+@section PageTitle
+    {
+    <!-- Title -->
+    <div class="row heading-bg">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h5 class="txt-dark">@ViewData["Title"]</h5>
+        </div>
+        <!-- Breadcrumb -->
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <ol class="breadcrumb">
+                <li><a asp-area="SystemAdmin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+                <li class="active"><span>@ViewData["Title"]</span></li>
+            </ol>
+        </div>
+        <!-- /Breadcrumb -->
+    </div>
+    <!-- /Title -->
+}
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Phân quyền chức năng</h4>
+            </div>
+            <div class="modal-body">
+                <p>Danh sách quyền: </p>
+                <select class="select2" name="Roles" multiple="multiple">
+                    <option value=""></option>
+                    <option value="IsRead">Đọc</option>
+                    <option value="IsWrite">Ghi</option>
+
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary" id="saveRFChange">Lưu Lại</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-sm-12">
+    <div class="panel panel-default card-view">
+        <div class="panel-heading" id="panel-heading">
+            <div class="pull-left">
+                <h6 class="panel-title txt-dark">Thông tin chức năng</h6>
+            </div>
+            <div class="pull-right">
+                <div class="form-group mb-0">
+                    <button type="submit" id="save" class="btn btn-success btn-anim"><i style="color: #FFF" class="fa fa-check"></i><span class="btn-text">Lưu lại</span></button>
+                    <button class="btn btn-warning btn-anim" type="button" id="reload"><i style="color: #FFF" class="fa fa-refresh"></i><span class="btn-text">Tải lại</span></button>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                <div class="form-wrap">
+                    <div class="col-md-3">
+                        <div class="container">
+                            <ul role="menu">
+                                <li class="block-container col-sm-12">
+                                    <ul>
+                                        <li>
+                                            <form asp-controller="RoleFunction"
+                                                  asp-action="GetAreasAsync"
+                                                  data-ajax-begin="onBegin" data-ajax-complete="onComplete"
+                                                  data-ajax-failure="onFailed" data-ajax-success="onSuccess"
+                                                  data-ajax="true" data-ajax-method="GET">
+                                                @foreach (var r in Model.Roles)
+                                                {
+                                                    <div class="form-group">
+                                                        <div class="radio radio-success">
+                                                            <input id="@r.Id" value="@r.Id" name="roleId" type="radio">
+                                                            <label class="checkbox-inline" for="@r.Id">@r.Name</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <button type="submit" id="load" class="btn btn-sm btn-primary">Load</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-9" id="htmlResult"></div>
+
+                </div>
+            </div>
+
+            <br />
+        </div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <script>
+        var results = $("#htmlResult");
+
+        var onBegin = function () {
+
+        };
+
+        var onComplete = function () {
+
+        };
+
+        var onSuccess = function (context) {
+            results.html(context).fadeIn();
+        };
+        if ($("input[name='roleId']:checked").length === 0) {
+            $("#load").attr("disabled", true);
+        }
+        $("input[name='roleId']").on("change",
+            function () {
+                $("#load").attr("disabled", false);
+            });
+
+        var onFailed = function (context) {
+            $.toast({
+                heading: "Không thành công",
+                text: "Đã xảy ra lỗi!",
+                position: "top-center",
+                loaderBg: "#4dd4a8",
+                icon: "error",
+                hideAfter: 3500
+            });
+            console.log(context.responseText);
+        };
+    </script>
+}
+

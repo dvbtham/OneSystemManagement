@@ -17,17 +17,14 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
     {
         private readonly IRepository<Function> _funcRepository;
         private readonly IRepository<Area> _areaRepository;
-        private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<RoleFunction> _roleFunctionRepository;
 
         public AreaFunctionController(IOptions<AppSettings> appSettings,
             IRepository<Function> funcRepository, IRepository<Area> areaRepository,
-            IRepository<Role> roleRepository,
             IRepository<RoleFunction> roleFunctionRepository) : base(appSettings)
         {
             _funcRepository = funcRepository;
             _areaRepository = areaRepository;
-            _roleRepository = roleRepository;
             _roleFunctionRepository = roleFunctionRepository;
         }
 
@@ -53,8 +50,8 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                     {
                         Id = area.Id,
                         Name = area.AreaName
-                    },
-                    AllFunctions = functions.Select(x => new KeyValuePairResource { Id = x.Id, Name = x.FunctionName }).ToList()
+                    }
+                    
                 };
 
                 foreach (var f in functions)

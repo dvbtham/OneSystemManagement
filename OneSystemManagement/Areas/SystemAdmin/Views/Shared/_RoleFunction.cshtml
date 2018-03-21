@@ -1,0 +1,66 @@
+﻿@model OneSystemManagement.Areas.SystemAdmin.Models.RoleFunctionViewModel
+@{
+    Layout = null;
+}
+
+<ul role="menu" class="w3-animate-bottom" id="roleId" data-id="@Model.RoleId">
+    @foreach (var item in Model.Areas)
+    {
+        var areaCkecked = item.RoleAreas.Select(x => x.Id).Contains(item.Area.Id) ? "checked" : "";
+        <li class="block-container col-sm-3">
+            <ul>
+                <li>
+                    <div class="checkbox checkbox-primary">
+                        <input class="areaInput" id="area_@item.Area.Id" data-id="@item.Area.Id" data-area="@item.Area.Id" type="checkbox" @areaCkecked>
+                        <label for="area_@item.Area.Id">
+                            <h5>@item.Area.Name</h5>
+                        </label>
+                    </div>
+                </li>
+                @if (item.Functions.Any())
+                {
+                    foreach (var function in item.Functions)
+                    {
+                        var checkedClass = item.RoleFunctions.Select(x => x.Id).Contains(function.Id) ? "checked='checked'" : "disabled";
+                        <li class="link_container group_header"
+                            data-child="@function.ChildItems.Count"
+                            data-id="@function.Id"
+                            data-parentName="@function.Name">
+                            <div class="checkbox checkbox-primary">
+                                <input id="@item.Area.Id@function.Id" data-id="@function.Id" data-area="@item.Area.Id" class="parentFunction_@function.Id functionId childOfArea_@item.Area.Id" type="checkbox" @checkedClass>
+                                <label for="@item.Area.Id@function.Id">
+                                    @function.Name
+                                    <span class="pull-right edit-action" data-area="@item.Area.Id" title="Phân quyền" data-role="@Model.RoleId" data-id="@function.Id">
+                                        <i class="fa fa-edit" data-area="@item.Area.Id"  data-role="@Model.RoleId" data-id="@function.Id" title="Phân quyền"></i>
+                                    </span>
+
+                                </label>
+
+                            </div>
+                        </li>
+                        foreach (var f in function.ChildItems)
+                        {
+                            var checkedChildClass = item.RoleFunctions.Select(x => x.Id).Contains(f.Id) ? "checked='checked'" : "disabled";
+                            <li class="link_container childName" data-childName="@f.Name">
+                                <div class="checkbox checkbox-primary">
+                                    <input id="@item.Area.Id@f.Id" data-id="@f.Id" data-area="@item.Area.Id" class="childFunction_@f.Id functionId childOfArea_@item.Area.Id" type="checkbox" @checkedChildClass>
+                                    <label for="@item.Area.Id@f.Id">
+                                        @f.Name
+                                        <span class="pull-right edit-action" title="Phân quyền" data-area="@item.Area.Id" data-role="@Model.RoleId" data-id="@f.Id">
+                                            <i class="fa fa-edit" data-area="@item.Area.Id" data-role="@Model.RoleId" data-id="@f.Id" title="Phân quyền"></i>
+                                        </span>
+                                    </label>
+
+                                </div>
+                            </li>
+                        }
+
+                    }
+                }
+
+            </ul>
+        </li>
+    }
+</ul>
+
+<script src="~/js/controllers/roleFunction.js"></script>

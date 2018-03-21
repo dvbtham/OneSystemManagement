@@ -23,14 +23,14 @@ namespace OneSystemManagement.Core
                 .ForMember(ug => ug.IsRead,
                     opt => opt.MapFrom(u => u.RoleFunctions.Select(f => f.IsRead)))
                 .ForMember(ug => ug.IsWrite,
-                    opt => opt.MapFrom(u => u.RoleFunctions.Select(f => f.IsWrite))); ;
+                    opt => opt.MapFrom(u => u.RoleFunctions.Select(f => f.IsWrite))); 
             CreateMap<FunctionViewModel, Function>().ForMember(x => x.Id, opt => opt.Ignore());
             CreateMap<FunctionViewModel, FunctionViewModel>();
 
             CreateMap<SaveUserViewModel, SaveUserViewModel>();
 
             CreateMap<UserConfigViewModel, UserConfigViewModel>();
-
+            
         }
     }
 }
