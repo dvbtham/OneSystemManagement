@@ -19,16 +19,20 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Function> _funcRepository;
         private readonly IRepository<Area> _areaRepository;
+        private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<RoleFunction> _roleFunctionRepository;
 
         public RoleFunctionController(IOptions<AppSettings> appSettings,
-            IRepository<User> userRepository, IRepository<Function> funcRepository,
+            IRepository<User> userRepository,
+            IRepository<Function> funcRepository,
             IRepository<Area> areaRepository,
+            IRepository<Role> roleRepository,
             IRepository<RoleFunction> roleFunctionRepository) : base(appSettings)
         {
             _userRepository = userRepository;
             _funcRepository = funcRepository;
             _areaRepository = areaRepository;
+            _roleRepository = roleRepository;
             _roleFunctionRepository = roleFunctionRepository;
         }
 
@@ -127,21 +131,37 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
 
                 foreach (var f in functions)
                 {
-                    var treeViewItem = Map(f);
+                    var treeViewItem = Map(f, roleId);
                     treeViewItem.Area.Add(areaTree.Area);
                     treeViewItem.Roles = GetFunctionRoles(f.Id);
-
+                    treeViewItem.FunctionRoles = FetchRoles(f.Id, roleId);
                     areaTree.Functions.Add(treeViewItem);
                 }
                 var myArea = myRole?.MyAreas.FirstOrDefault(x => x.Id == areaTree.Area.Id);
                 if (myArea != null)
                     areaTree.RoleFunctions = myArea.MyFunctions.Select(x => new TreeViewVm { Id = x.Id, Name = x.Name }).ToList();
+
                 model.Add(areaTree);
             }
             result.RoleAreas = myRole?.MyAreas.Select(x => new KeyValuePairResource { Id = x.Id, Name = x.Name }).ToList();
             result.Areas = model;
             result.RoleId = roleId;
             return PartialView("_RoleFunction", result);
+        }
+
+        private IList<string> FetchRoles(int functionId, int roleId)
+        {
+            var roles = new List<string>();
+            var roleFunctions = _roleFunctionRepository.Query()
+                .Where(x => x.IdRole == roleId && x.IdFunction == functionId);
+
+            foreach (var rf in roleFunctions)
+            {
+                if (rf.IsRead) roles.Add("Đọc");
+                if (rf.IsWrite) roles.Add("Ghi");
+            }
+
+            return roles;
         }
 
         [NonAction]
@@ -165,13 +185,43 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                 if (string.IsNullOrEmpty(json)) return Json(new { status = false, message = "Dữ liệu rỗng" });
 
                 var model = JsonConvert.DeserializeObject<RoleFunctionFormJson>(json);
+                var role = await _roleRepository.Query().Include(x => x.RoleFunctions)
+                    .FirstOrDefaultAsync(x => x.Id == model.RoleId);
+                var functionRoleToDelete = new List<RoleFunction>();
+
+                var deletedarea = role.RoleFunctions
+                    .Where(x => x.IdRole == model.RoleId)
+                    .Select(x => x.AreaId)
+                    .Where(x => !model.Areas.Select(a => a.Id).Contains(x)).ToList();
+
+                if (deletedarea.Any())
+                {
+                    foreach (var i in deletedarea)
+                    {
+                        var temp = _roleFunctionRepository.Query()
+                            .Where(x => x.AreaId == i);
+                        await _roleFunctionRepository.DeleteRangeAsync(temp.ToList());
+                    }
+                    return Json(new { status = true, message = "Phân quyền chức năng thành công" });
+                }
 
                 foreach (var area in model.Areas)
                 {
+                    var deletedFunctions = role.RoleFunctions
+                        .Where(x => x.AreaId == area.Id)
+                        .Select(x => x.IdFunction)
+                        .Where(x => !area.Functions.Contains(x)).ToList();
+
                     foreach (var function in area.Functions)
                     {
                         var roleFunctionAdd = await _roleFunctionRepository.Query()
                             .FirstOrDefaultAsync(x => x.AreaId == area.Id && x.IdRole == model.RoleId && x.IdFunction == function);
+                        foreach (var fId in deletedFunctions)
+                        {
+                            var roleFunctionsToDelete = role.RoleFunctions
+                            .FirstOrDefault(x => x.AreaId == area.Id && x.IdRole == model.RoleId && x.IdFunction == fId);
+                            functionRoleToDelete.Add(roleFunctionsToDelete);
+                        }
 
                         if (roleFunctionAdd == null)
                         {
@@ -188,6 +238,11 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                             _roleFunctionRepository.Add(entity);
                         }
                     }
+                }
+                var finalResult = functionRoleToDelete.Distinct().ToList();
+                foreach (var roleFunction in finalResult)
+                {
+                    _roleFunctionRepository.Delete(roleFunction);
                 }
                 _roleFunctionRepository.SaveChanges();
                 return Json(new { status = true, message = "Phân quyền chức năng thành công" });
@@ -211,8 +266,8 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                     .SingleOrDefault(x => x.AreaId == model.AreaId && x.IdRole == model.RoleId && x.IdFunction == model.FunctionId);
                 if (roleFunction == null) return Json(new { status = false, message = "Không tìm thấy dữ liệu" });
 
-                await _roleFunctionRepository.DeleteAsync(roleFunction.Id);
-
+                _roleFunctionRepository.Delete(roleFunction);
+                _roleRepository.SaveChanges();
                 return Json(new { status = true, message = "Cập nhật thành công" });
             }
             catch (Exception e)
@@ -236,7 +291,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
 
                 roleFunction.IsWrite = model.Roles.Contains("IsWrite");
                 roleFunction.IsRead = model.Roles.Contains("IsRead");
-               
+
                 _roleFunctionRepository.SaveChanges();
 
                 return Json(new { status = true, message = "Cập nhật thành công" });
@@ -283,7 +338,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
 
                 foreach (var roleFunction in roleFunctions)
                 {
-                    _roleFunctionRepository.Delete(roleFunction.Id);
+                    _roleFunctionRepository.Delete(roleFunction);
                 }
                 _roleFunctionRepository.SaveChanges();
                 return Json(new { status = true, message = "Cập nhật thành công" });
@@ -295,7 +350,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
         }
 
         [NonAction]
-        private TreeViewVm Map(Function function)
+        private TreeViewVm Map(Function function, int roleId = 0)
         {
             var treeViewVm = new TreeViewVm
             {
@@ -310,6 +365,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
             foreach (var childCategory in childFunctions)
             {
                 var childTreeViewVm = Map(childCategory);
+                childTreeViewVm.FunctionRoles = FetchRoles(childCategory.Id, roleId);
                 treeViewVm.AddChildItem(childTreeViewVm);
             }
 

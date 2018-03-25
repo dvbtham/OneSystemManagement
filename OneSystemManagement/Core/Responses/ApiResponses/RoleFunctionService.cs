@@ -18,7 +18,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         {
             foreach (var roleFunction in entities)
             {
-                await _roleFuncRepository.DeleteAsync(roleFunction.Id);
+                await _roleFuncRepository.DeleteAsync(roleFunction);
             }
            
         }

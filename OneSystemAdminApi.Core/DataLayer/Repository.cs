@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace OneSystemAdminApi.Core.DataLayer
 
         public async Task<T> FindAsync(Expression<Func<T, bool>> match)
         {
-            return await _dbContext.Set<T>().SingleOrDefaultAsync(match);
+            return await _dbContext.Set<T>().FirstOrDefaultAsync(match);
         }
 
         public async Task<T> AddAsync(T entity)
@@ -67,7 +68,7 @@ namespace OneSystemAdminApi.Core.DataLayer
                 throw new ArgumentNullException(nameof(changes));
             }
 
-             _dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         public async Task<T> DeleteAsync(int id)
@@ -84,10 +85,39 @@ namespace OneSystemAdminApi.Core.DataLayer
             return entity;
         }
 
+        public async Task DeleteRangeAsync(IList<T> entities)
+        {
+            _dbContext.Set<T>().RemoveRange(entities);
+
+            await _dbContext.SaveChangesAsync();
+
+        }
+
+        public async Task<T> DeleteAsync(T entity)
+        {
+            if (entity == null) return null;
+
+            _dbContext.Set<T>().Remove(entity);
+
+            await _dbContext.SaveChangesAsync();
+
+            return entity;
+        }
+
         public T Delete(int id)
         {
             var entity = _dbContext.Set<T>().Find(id);
 
+            if (entity != null)
+            {
+                _dbContext.Set<T>().Remove(entity);
+            }
+
+            return entity;
+        }
+
+        public T Delete(T entity)
+        {
             if (entity != null)
             {
                 _dbContext.Set<T>().Remove(entity);

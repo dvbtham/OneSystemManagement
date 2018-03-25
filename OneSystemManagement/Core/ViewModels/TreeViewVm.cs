@@ -15,7 +15,7 @@ namespace OneSystemManagement.Core.ViewModels
 
         public IList<KeyValuePairResource> Roles { get; set; } = new List<KeyValuePairResource>();
 
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -28,6 +28,8 @@ namespace OneSystemManagement.Core.ViewModels
         public TreeViewVm Parent { get; set; }
         
         public IList<TreeViewVm> ChildItems { get; set; }
+
+        public IList<string> FunctionRoles { get; set; } = new List<string>();
 
         public void AddChildItem(TreeViewVm childItem)
         {

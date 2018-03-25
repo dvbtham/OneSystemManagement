@@ -12,6 +12,13 @@ namespace OneSystemAdminApi.Core.EntityMapping
             {
                 entity.ToTable("RoleFunctions");
 
+                entity.HasKey(x => new
+                {
+                    x.IdRole,
+                    x.AreaId,
+                    x.IdFunction
+                });
+
                 entity.HasOne(d => d.Function)
                     .WithMany(p => p.RoleFunctions)
                     .HasForeignKey(d => d.IdFunction)
