@@ -232,7 +232,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                                 IdRole = model.RoleId,
                                 CreateDate = DateTime.Now,
                                 IsRead = true,
-                                IsWrite = false
+                                IsWrite = true
                             };
 
                             _roleFunctionRepository.Add(entity);

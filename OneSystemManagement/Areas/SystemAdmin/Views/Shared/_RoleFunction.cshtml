@@ -62,9 +62,7 @@
                                         @f.Name
                                         @if (checkedChildClass == "checked='checked'")
                                         {
-                                            <span class="pull-right edit-action action_@item.Area.Id@f.Id" title="Phân quyền" data-area="@item.Area.Id" data-role="@Model.RoleId" data-id="@f.Id">
-                                                <i class="fa fa-edit" data-area="@item.Area.Id" data-role="@Model.RoleId" data-id="@f.Id" title="Phân quyền"></i>
-                                            </span>
+                                            <i class="fa fa-edit pull-right edit-action action_@item.Area.Id@f.Id" data-area="@item.Area.Id" data-role="@Model.RoleId" data-id="@f.Id" title="Phân quyền"></i>
                                         }
                                     </label>
                                     @if (checkedChildClass == "checked='checked'")

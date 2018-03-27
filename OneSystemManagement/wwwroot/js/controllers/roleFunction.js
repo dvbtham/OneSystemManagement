@@ -30,7 +30,7 @@
         var unSuccessfullySaved = function (res) {
             $.toast({
                 heading: "Không thành công",
-                text: res.message,
+                text: res.statusCode === 401 ? "Phiên làm việc của bạn đã hết, vui lòng load lại trang!" : res.message,
                 position: "top-center",
                 loaderBg: "#4dd4a8",
                 icon: "error",
@@ -44,7 +44,6 @@
             $(".childFunction").on("change", function () {
                 const parent = $(this).data("parent");
                 const area = $(this).data("area");
-                const mId = $(this).attr("id");
                 if (!$(this).is(":checked")) {
                     if ($(`.childOfFunction_${parent}${area}:checked`).length === 0) {
                         $(`#${area}${parent}`).prop("checked", false);
@@ -84,9 +83,18 @@
             $(".edit-action").on("click",
                 function (e) {
                     e.preventDefault();
-                    roleFunction.areaId = $(this).data("area");
-                    roleFunction.functionId = $(this).data("id");
+                    var me = $(this);
+                    e.preventDefault();
 
+                    if (me.data("requestRunning")) {
+                        return;
+                    }
+                    me.data("requestRunning", true);
+
+                    roleFunction.areaId = me.data("area");
+                    roleFunction.functionId = me.data("id");
+                    roleFunction.roleId = me.data("role");
+                    
                     $.ajax({
                         url: `
                             /SystemAdmin/RoleFunction/GetRole?roleId=${roleFunction.roleId}&areaId=${
@@ -98,6 +106,9 @@
                         },
                         error: function (res) {
                             unSuccessfullySaved(res);
+                        },
+                        complete: function () {
+                            me.data("requestRunning", false);
                         }
                     });
 
@@ -108,6 +119,9 @@
                 function (e) {
                     const role = $(e.currentTarget).val();
                     roleFunction.roles = role;
+
+                    localStorage.setItem("roleFunction", JSON.stringify(roleFunction));
+
                 });
 
             $("#reload").on("click",
@@ -116,7 +130,7 @@
                 });
 
             $.each($(".childName"),
-                function (i, el) {
+                function () {
                     const name = $(this).data("childname");
                     functionName.push(name.toLowerCase());
                     const inputInGroup = $(this).find("input");
@@ -157,12 +171,15 @@
                         return;
                     }
 
-                    me.data('requestRunning', true);
+                    const roleId = $("#roleId").data("id");
+                    dataObj.roleId = roleId;
+                    me.data("requestRunning", true);
+
                     $.each($(".functionId:checked"),
                         function () {
                             const areaId = $(this).data("area");
-                            const index = dataObj.areas.map(function (e) { return e.id; }).indexOf(areaId);
-                            if (index === -1)
+                            const i = dataObj.areas.map(function (e) { return e.id; }).indexOf(areaId);
+                            if (i === -1)
                                 dataObj.areas.push({ id: areaId, functions: [] });
                         });
 
@@ -183,20 +200,22 @@
                     const index = dataObj.areas.map(function (e) { return e.id; }).indexOf(0);
                     if (index !== -1)
                         dataObj.areas.splice(index, 1);
-
+                    console.log(dataObj);
                     $.ajax({
                         url: "/SystemAdmin/RoleFunction/SaveChanges",
                         data: {
                             json: JSON.stringify(dataObj)
                         },
                         success: function (res) {
-                            if (res.status)
+                            if (res.status) {
                                 successfullySaved(res, false);
+                                $("#load").click();
+                            }
                             else
                                 unSuccessfullySaved(res);
 
                             dataObj = {
-                                roleId: $("#roleId").data("id"),
+                                roleId: 0,
                                 areas:
                                     [
                                         {
@@ -220,19 +239,20 @@
                     var me = $(this);
                     e.preventDefault();
 
-                    if (me.data('requestRunning')) {
+                    if (me.data("requestRunning")) {
                         return;
                     }
 
-                    me.data('requestRunning', true);
+                    me.data("requestRunning", true);
                     if ($(".select2").val() === null) {
                         roleFunction.roles = [];
                     }
+
                     $.ajax({
                         url: "/SystemAdmin/RoleFunction/UpdateRole",
                         type: "POST",
                         data: {
-                            json: JSON.stringify(roleFunction)
+                            json: localStorage.getItem("roleFunction")
                         },
                         success: function (res) {
                             if (res.status) {
@@ -248,6 +268,7 @@
                         },
                         complete: function () {
                             me.data("requestRunning", false);
+                            localStorage.removeItem("roleFunction");
                         }
                     });
                 });
