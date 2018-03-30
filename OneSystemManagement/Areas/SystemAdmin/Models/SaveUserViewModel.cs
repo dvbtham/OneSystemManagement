@@ -15,22 +15,27 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
 
         [Required(ErrorMessage = "Bạn chưa nhập email")]
         [EmailAddress(ErrorMessage = "Vui lòng nhập đúng định dạng email")]
+        [StringLength(200, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Email { get; set; }
         
         [Display(Name = "Điện thoại")]
+        [StringLength(50, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Phone { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập họ tên")]
         [Display(Name = "Họ tên")]
+        [StringLength(150, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string FullName { get; set; }
 
         //[Required(ErrorMessage = "Bạn chưa nhập mật khẩu")]
         [Display(Name = "Mật khẩu")]
+        [StringLength(250, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Password { get; set; }
 
         //[Required(ErrorMessage = "Bạn chưa nhập mật khẩu để xác nhận")]
         [Display(Name = "Nhập lại mật khẩu")]
         [Compare("Password", ErrorMessage = "Mật khẩu không khớp")]
+        [StringLength(250, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string ConfirmPassword { get; set; }
 
         [Display(Name = "Tài khoản Facebook")]
@@ -50,10 +55,12 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
 
         [Required(ErrorMessage = "Bạn chưa nhập nhận dạng người dùng")]
         [Display(Name = "Nhận dạng")]
+        [StringLength(268, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string UserIdentifier { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập mã code")]
         [Display(Name = "Mã code")]
+        [StringLength(20, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string UserCode { get; set; }
 
         [Display(Name = "Đã xác nhận")]
@@ -69,18 +76,22 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
         public bool IsAdmin { get; set; } = false;
 
         [Display(Name = "Địa chỉ")]
+        [StringLength(450, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Address { get; set; }
 
         [Display(Name = "Ảnh đại diện")]
+        [StringLength(350, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Avatar { get; set; }
 
         [Display(Name = "Đăng nhập thất bại")]
         public int LoginFailed { get; set; } = 0;
 
         [Display(Name = "Code câu hỏi")]
+        [StringLength(300, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string QuestionCode { get; set; }
 
         [Display(Name = "Câu trả lời")]
+        [StringLength(500, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string QuestionAnswer { get; set; }
 
         [Display(Name = "Đăng nhập gần đây")]

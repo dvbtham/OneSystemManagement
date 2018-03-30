@@ -26,17 +26,21 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
 
         [Display(Name = "Mã code")]
         [Required(ErrorMessage = "Bạn chưa nhập mã code")]
+        [StringLength(30, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string CodeFunction { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập tên chức năng")]
         [Display(Name = "Tên chức năng")]
+        [StringLength(300, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string FunctionName { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập mô tả")]
         [Display(Name = "Mô tả")]
+        [StringLength(500, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập Url")]
+        [StringLength(500, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Url { get; set; }
 
         [Display(Name = "Quyền đọc")]

@@ -20,14 +20,17 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
 
         [Required(ErrorMessage = "Bạn chưa nhập mã Code")]
         [Display(Name = "Mã code")]
+        [StringLength(30, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string CodeArea { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập thông tin vùng")]
         [Display(Name = "Tên vùng")]
+        [StringLength(300, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string AreaName { get; set; }
 
         [Required(ErrorMessage = "Bạn chưa nhập mô tả")]
         [Display(Name = "Mô tả")]
+        [StringLength(500, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Description { get; set; }
 
         [IgnoreMap]
