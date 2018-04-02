@@ -98,7 +98,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
             var outputModel = response.ContentAsType<SingleModelResponse<ResponseResult>>();
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError("loginStatus", outputModel.Message);
+                ModelState.AddModelError("loginStatus", outputModel.ErrorMessage);
                 return View(model);
             }
             var user = await _userRepository.Query()
