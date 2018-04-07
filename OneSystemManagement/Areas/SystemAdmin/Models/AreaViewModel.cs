@@ -80,16 +80,11 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Url { get; set; }
         public bool IsRead { get; set; }
         public bool IsWrite { get; set; }
 
-        public FunctionWithRole Parent { get; set; }
         public IList<FunctionWithRole> ChildItems { get; set; } = new List<FunctionWithRole>();
 
-        public void AddChildItem(FunctionWithRole childItem)
-        {
-            childItem.Parent = this;
-            ChildItems.Add(childItem);
-        }
     }
 }

@@ -103,7 +103,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
             }
             var user = await _userRepository.Query()
                 .Include(x => x.UserRoles).ThenInclude(x => x.Role)
-                .SingleOrDefaultAsync(x => x.Email == model.Email);
+                .FirstOrDefaultAsync(x => x.Email == model.Email);
 
             var claims = new List<Claim>
             {

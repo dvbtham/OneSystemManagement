@@ -272,11 +272,14 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         [HttpDelete("email/{email}")]
         public async Task<IActionResult> GetByEmail(string email)
         {
-            var response = new SingleModelResponse<UserResultResource>();
+            var response = new SingleModelResponse<UserResultListResource>();
 
             try
             {
-                var entity = await _userRepository.Query().SingleOrDefaultAsync(x => x.Email == email);
+                var entity = await _userRepository.Query()
+                    .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.Role)
+                    .FirstOrDefaultAsync(x => x.Email == email);
 
                 if (entity == null)
                 {
@@ -284,9 +287,10 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                     response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
                     return response.ToHttpResponse();
                 }
-                var resource = new UserResultResource();
-                _mapper.Map(entity, resource);
-                response.Model = resource;
+
+                var model = new UserResultListResource();
+                _mapper.Map(entity, model);
+                response.Model = model;
             }
             catch (Exception ex)
             {
@@ -334,13 +338,30 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                             Id = rf.Area.Id,
                             Name = rf.Area.AreaName,
                             MyFunctions = rf.Area.RoleFunctions
-                                .Where(mfrf => mfrf.IdRole == usr.IdRole && mfrf.AreaId == rf.AreaId && rf.Area.Functions.Select(mf => mf.Id).Contains(mfrf.IdFunction))
+                                .Where(mfrf => mfrf.IdRole == usr.IdRole
+                                && mfrf.AreaId == rf.AreaId
+                                && mfrf.Function.Functions.Count > 0
+                                && rf.Area.Functions.Select(mf => mf.Id).Contains(mfrf.IdFunction))
                                 .Select(kvrf => new FunctionWithRole
                                 {
                                     Id = kvrf.Function.Id,
                                     Name = kvrf.Function.FunctionName,
                                     IsWrite = kvrf.IsWrite,
-                                    IsRead = kvrf.IsRead
+                                    IsRead = kvrf.IsRead,
+                                    Url = kvrf.Function.Url,
+                                    ChildItems = kvrf.Function.Functions
+                                    .Where(ff => ff.RoleFunctions
+                                    .Any(g => g.IdFunction == ff.Id && g.IdRole == usr.IdRole && g.AreaId == rf.AreaId))
+                                    .Select(xx => new FunctionWithRole
+                                    {
+                                        Id = xx.Id,
+                                        Name = xx.FunctionName,
+                                        Url = xx.Url,
+                                        IsRead = xx.RoleFunctions
+                                        .FirstOrDefault(vv => vv.IdRole == usr.IdRole && vv.IdFunction == xx.Id).IsRead,
+                                        IsWrite = xx.RoleFunctions
+                                            .FirstOrDefault(vv => vv.IdRole == usr.IdRole && vv.IdFunction == xx.Id).IsWrite
+                                    }).ToList()
                                 }).ToList()
                         }).ToList()
                 }).ToList()

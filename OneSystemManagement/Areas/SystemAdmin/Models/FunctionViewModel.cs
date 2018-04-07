@@ -34,7 +34,6 @@ namespace OneSystemManagement.Areas.SystemAdmin.Models
         [StringLength(300, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string FunctionName { get; set; }
 
-        [Required(ErrorMessage = "Bạn chưa nhập mô tả")]
         [Display(Name = "Mô tả")]
         [StringLength(500, ErrorMessage = "{0} chỉ nhập tối đa {1} ký tự")]
         public string Description { get; set; }

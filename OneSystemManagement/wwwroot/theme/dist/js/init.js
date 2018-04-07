@@ -143,6 +143,10 @@ var philbert = function () {
 
     if ($page_wrapper.find(".login").length === 0)
         $page_wrapper.addClass('poa');
+    else {
+        $page_wrapper.removeClass('poa');
+        $wrapper.removeClass('slide-nav-toggle');
+    }
 
     $(document).on('click', '#toggle_nav_btn', function (e) {
         $wrapper.removeClass('open-right-sidebar open-setting-panel').toggleClass('slide-nav-toggle');
@@ -370,6 +374,7 @@ var chatApp = function () {
 
 var resizePageWrapper = function () {
     var width = $(window).width();
+    if ($page_wrapper.find(".login").length !== 0) return;
     if (width <= 1007) {
         $page_wrapper.removeClass("poa");
         $wrapper.removeClass("slide-nav-toggle");

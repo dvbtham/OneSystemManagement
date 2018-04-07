@@ -90,6 +90,15 @@ namespace OneSystemManagement.Core.Mapping
                     Name = f.FunctionName
                 })));
 
+            CreateMap<User, UserResultListResource>()
+                .ForMember(rs => rs.Id, p => p.MapFrom(u => u.Id))
+                .ForMember(rs => rs.FullName, p => p.MapFrom(u => u.FullName))
+                .ForMember(rs => rs.Email, p => p.MapFrom(u => u.Email))
+                .ForMember(rs => rs.UserCode, p => p.MapFrom(u => u.UserCode))
+                .ForMember(rs => rs.UserIdentifier, p => p.MapFrom(u => u.UserIdentifier))
+                .ForMember(rs => rs.RoleCodes, p => p.MapFrom(u => u.UserRoles.Select(x => x.Role.CodeRole)))
+                ;
+
             CreateMap<Role, RoleResource>();
             CreateMap<User, UserGridResource>()
                 .ForMember(ug => ug.Roles,
