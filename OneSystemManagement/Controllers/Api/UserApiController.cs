@@ -117,7 +117,7 @@ namespace OneSystemManagement.Controllers.Api
         public async Task<IActionResult> Login([FromBody] LoginViewModel request, bool isAdminLogin = false)
         {
             var loginCode = await _userService.Login(request.Email, request.Password, isAdminLogin: isAdminLogin);
-            var response = new SingleModelResponse<TokenResult>();
+            var response = new SingleModelResponse<LoginResult>();
             switch (loginCode)
             {
                 case (int)LoginStatus.Success:
@@ -138,7 +138,11 @@ namespace OneSystemManagement.Controllers.Api
 
                     response.Message = "Đăng nhập thành công";
                     response.DidError = false;
-                    response.Model = new TokenResult{ Token = new JwtSecurityTokenHandler().WriteToken(token) };
+                    response.Model = new LoginResult
+                    {
+                        Email = request.Email,
+                        Token = new JwtSecurityTokenHandler().WriteToken(token)
+                    };
                     return response.ToHttpResponse();
 
                 case (int)LoginStatus.NotAdmin:

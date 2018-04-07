@@ -4,8 +4,9 @@
     {
         public string Message { get; set; }
     }
-    public class TokenResult
+    public class LoginResult
     {
+        public string Email { get; set; }
         public string Token { get; set; }
     }
 }
