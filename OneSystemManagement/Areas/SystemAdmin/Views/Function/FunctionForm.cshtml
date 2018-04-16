@@ -73,11 +73,11 @@
                             <label class="control-label mb-10" asp-for="Url"></label>
                             @if (Model.Action.ToLower() == "create")
                             {
-                                <input asp-for="Url" value="http://yourdomain.com/api/user" type="url" class="form-control">
+                                <input asp-for="Url" value="http://yourdomain.com/api/user" type="text" class="form-control">
                             }
                             else
                             {
-                                <input asp-for="Url" type="url" class="form-control">
+                                <input asp-for="Url" type="text" class="form-control">
                             }
                             <span asp-validation-for="Url" class="text-danger"></span>
                         </div>

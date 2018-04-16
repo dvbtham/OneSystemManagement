@@ -120,8 +120,12 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                 {
                     ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
                     IsPersistent = false,
-                    AllowRefresh = false
+                    AllowRefresh = true
                 });
+
+                if(User.Identity.IsAuthenticated){
+                    
+                }
 
             return GoToReturnUrl(returnUrl);
         }

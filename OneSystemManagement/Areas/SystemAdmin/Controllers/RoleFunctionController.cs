@@ -54,6 +54,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                 {
                     Id = usr.Role.Id,
                     Name = usr.Role.RoleName,
+                    RoleCode = usr.Role.CodeRole,
                     AllAreas = _areaRepository.Query().Select(x => new KeyValuePairResource { Id = x.Id, Name = x.AreaName }).ToList(),
                     MyAreas = usr.Role.RoleFunctions.GroupBy(grf => grf.AreaId)
                         .Select(grf => grf.First())
@@ -61,6 +62,7 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                         {
                             Id = rf.Area.Id,
                             Name = rf.Area.AreaName,
+                            AreaCode = rf.Area.CodeArea,
                             AllFunctions = _funcRepository.Query().Select(x => new KeyValuePairResource { Id = x.Id, Name = x.FunctionName }).ToList(),
                             MyFunctions = rf.Area.RoleFunctions
                                 .Where(mfrf => mfrf.IdRole == usr.IdRole && mfrf.AreaId == rf.AreaId && rf.Area.Functions.Select(mf => mf.Id).Contains(mfrf.IdFunction))
@@ -69,7 +71,8 @@ namespace OneSystemManagement.Areas.SystemAdmin.Controllers
                                     Id = kvrf.Function.Id,
                                     Name = kvrf.Function.FunctionName,
                                     IsWrite = kvrf.IsWrite,
-                                    IsRead = kvrf.IsRead
+                                    IsRead = kvrf.IsRead,
+                                    FunctionCode = kvrf.Function.CodeFunction
                                 }).ToList()
                         }).ToList()
                 }).ToList()

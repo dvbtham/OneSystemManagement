@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneSystemAdminApi.Core.DataLayer;
 using OneSystemAdminApi.Core.EntityLayer;
+using OneSystemManagement.Areas.SystemAdmin.Models;
 using OneSystemManagement.Controllers.Resources;
 
 namespace OneSystemManagement.Core.Responses.ApiResponses
@@ -17,15 +18,19 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         private readonly IRepository<Function> _functionRepository;
         private readonly IRepository<Role> _roleRepository;
         private readonly IRoleFunctionService _roleFunctionService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
         public FunctionService(IRepository<Function> functionRepository,
-            IRepository<Role> roleRepository, IRoleFunctionService roleFunctionService,
+            IRepository<Role> roleRepository, 
+            IRoleFunctionService roleFunctionService,
+            IUserService userService,
             IMapper mapper)
         {
             _functionRepository = functionRepository;
             _roleRepository = roleRepository;
             _roleFunctionService = roleFunctionService;
+            _userService = userService;
             _mapper = mapper;
         }
 
@@ -196,7 +201,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
 
             return response.ToHttpResponse();
         }
-
+       
         public async Task<IActionResult> FunctionListByRole(int roleId)
         {
             var response = new ListModelResponse<FunctionResource>();

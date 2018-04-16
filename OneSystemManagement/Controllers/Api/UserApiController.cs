@@ -94,6 +94,12 @@ namespace OneSystemManagement.Controllers.Api
             return await _userService.Update(id, resource);
         }
 
+        [HttpPut("update/{email}")]
+        public async Task<IActionResult> UpdateEmail(string email, [FromBody] UserResultListResource resource)
+        {
+            return await _userService.UpdateEmail(email, resource);
+        }
+
         /// <summary>
         /// Xóa người dùng theo Id
         /// </summary>
@@ -186,7 +192,7 @@ namespace OneSystemManagement.Controllers.Api
         /// <param name="email"></param>
         /// <returns></returns>
         [HttpGet("email/{email}")]
-        public async Task<IActionResult> GetByUsername(string email)
+        public async Task<IActionResult> GetByEmail(string email)
         {
             return await _userService.GetByEmail(email);
         }

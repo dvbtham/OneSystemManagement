@@ -331,12 +331,14 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                 {
                     Id = usr.Role.Id,
                     Name = usr.Role.RoleName,
+                    RoleCode = usr.Role.CodeRole,
                     MyAreas = usr.Role.RoleFunctions.GroupBy(grf => grf.AreaId)
                         .Select(grf => grf.First())
                         .Select(rf => new MyArea
                         {
                             Id = rf.Area.Id,
                             Name = rf.Area.AreaName,
+                            AreaCode = rf.Area.CodeArea,
                             MyFunctions = rf.Area.RoleFunctions
                                 .Where(mfrf => mfrf.IdRole == usr.IdRole
                                 && mfrf.AreaId == rf.AreaId
@@ -346,6 +348,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                                 {
                                     Id = kvrf.Function.Id,
                                     Name = kvrf.Function.FunctionName,
+                                    FunctionCode = kvrf.Function.CodeFunction,
                                     IsWrite = kvrf.IsWrite,
                                     IsRead = kvrf.IsRead,
                                     Url = kvrf.Function.Url,
@@ -357,6 +360,8 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
                                         Id = xx.Id,
                                         Name = xx.FunctionName,
                                         Url = xx.Url,
+                                        Parent = kvrf.Function.Id,
+                                        FunctionCode = xx.CodeFunction,
                                         IsRead = xx.RoleFunctions
                                         .FirstOrDefault(vv => vv.IdRole == usr.IdRole && vv.IdFunction == xx.Id).IsRead,
                                         IsWrite = xx.RoleFunctions
@@ -480,6 +485,38 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         public virtual void Dispose()
         {
             _userRepository?.Dispose();
+        }
+
+        public async Task<IActionResult> UpdateEmail(string email, [FromBody] UserResultListResource resource)
+        {
+            var response = new SingleModelResponse<UserResultListResource>();
+
+            try
+            {
+                var entity = await _userRepository.FindAsync(x => x.Email == email);
+
+                if (entity == null || resource == null)
+                {
+                    response.DidError = true;
+                    response.ErrorMessage = "Không tìm thấy kết quả phù hợp";
+                    return response.ToHttpResponse();
+                }
+
+                entity.FullName = resource.FullName;
+                entity.Avatar = resource.Avatar;
+
+                await _userRepository.UpdateAsync(entity);
+
+                response.Model = resource;
+                response.Message = "Dữ liệu đã được lưu thành công.";
+            }
+            catch (Exception ex)
+            {
+                response.DidError = true;
+                response.ErrorMessage = ex.ToString();
+            }
+
+            return response.ToHttpResponse();
         }
     }
 }

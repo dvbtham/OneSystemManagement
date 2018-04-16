@@ -13,6 +13,7 @@ namespace OneSystemManagement.Core.Responses.ApiResponses
         Task<IActionResult> GetAsync(int id);
         Task<IActionResult> Create(SaveUserResource resource);
         Task<IActionResult> Update(int id, SaveUserResource resource);
+        Task<IActionResult> UpdateEmail(string email, UserResultListResource resource);
         Task<IActionResult> Delete(int id);
         Task<User> GetUserWithRelated(int id, bool include = true);
         Task<int> Login(string email, string password, bool isAdminLogin = false);
